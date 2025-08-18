@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Sheets Table</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        const sheetID = "1TpX7oRId-a7WD1PFH7aJoR9y6ConYYIWwWOYwMOmO-k";
+        const gid = "187862000";
+        const query = encodeURIComponent("select A,B,C,D,E,I,H,M"); // Fetch the relevant columns (K contains the URLs)
+        const apiURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&gid=${gid}&tq=${query}`;
+        
+        async function fetchData() {
+            try {
+                
+                const response = await fetch(apiURL);
+                const text = await response.text();
+                const jsonText = text.match(/\{.*\}/s)?.[0]; 
+                if (!jsonText) return;
+
+                const data = JSON.parse(jsonText);
+                // console.log(data.table.rows);
+                const headers = data.table.cols.filter((_, index) => index !== 7).map(col => col.label || "");
+                
+                function formatCell(cell, rowIndex, colIndex) {
+                    if (!cell || cell.v === undefined) return ""; // Empty cell
+
+                    if (cell.f) return cell.f; // If Google provides formatted text, use it
+                    
+                    if (typeof cell.v === "string" && cell.v.startsWith("Date(")) {
+                        return extractTimeFromDate(cell.v); // Convert Google Sheets Date format
+                    }
+                    // Check if the cell contains a URL in column K (or other designated column)
+                    if (rowIndex >= 0 && colIndex === 5) {  // Apply only to column I (index 5)
+                        const urlCell = data.table.rows[rowIndex]?.c[7]; // Correct index for column M
+                        // console.log(`Row ${rowIndex}, Column I:`, cell.v);  
+                        // console.log(`Row ${rowIndex}, URL column:`, urlCell?.v);  
+                        if (urlCell && urlCell.v) {
+                            return `<a href="${urlCell.v}" target="_blank">${cell.v}</a>`;
+                        }
+                    }
+                    // If it's a normal URL, create a link
+                    // if (typeof cell.v === "string" && cell.v.startsWith("http")) {
+                    //     return `<a href="${cell.v}" target="_blank">${cell.v}</a>`; // Handle normal URLs
+                    // }
+
+                    // // Handle date formatting
+                    // if (typeof cell.v === "string" && cell.v.startsWith("Date(")) {
+                    //     return extractTimeFromDate(cell.v); // Convert Google Sheets Date format
+                    // }
+
+
+                    return cell.v; // Normal text
+                }
+
+                // Extract "hh:mm" from Google Sheets Date format
+                function extractTimeFromDate(dateString) {
+                    const match = dateString.match(/Date\((\d+),(\d+),(\d+),(\d+),(\d+)/);
+                    if (!match) return dateString; // If format is unexpected, return as is
+
+                    let hours = parseInt(match[4]); // Get hours
+                    let minutes = match[5].padStart(2, "0"); // Get minutes and pad if needed
+
+                    return `${hours}:${minutes}`; // Return time in hh:mm format
+                }
+
+                const rows = data.table.rows.map((row, rowIndex) => 
+                    row.c.filter((_, colIndex) => colIndex !== 7) // Exclude column M (index 7)
+                        .map((cell, colIndex) => formatCell(cell, rowIndex, colIndex))
+                );
+
+
+                // Generate table
+                let table = `<table class="table table-striped table-bordered mt-3">
+                                <thead class="custom-header"><tr>`;
+                headers.forEach(header => table += `<th>${header}</th>`);
+                table += `</tr></thead><tbody>`;
+
+                rows.forEach(row => {
+                    table += "<tr>";
+                    //row.forEach(cell => table += `<td>${cell}</td>`);
+                    row.forEach(cell => table += `<td>${cell instanceof String ? cell : cell.toString()}</td>`);
+                    table += "</tr>";
+                });
+
+                table += "</tbody></table>";
+
+                document.getElementById("table-container").innerHTML = table;
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+        
+        setInterval(fetchData, 5000); // Refresh data every 5 seconds
+        window.onload = fetchData; // Fetch data when the page loads
+    </script>
+</head>
+<body class="bg-light">
+        <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
+    <div class="container">
+        <img src="https://raw.githubusercontent.com/xxonara/Basket/main/talsu%20novads2.jpg" alt="Logo" class="navbar-logo" style="height: 40px; margin-right: 10px;">
+        <a class="navbar-brand" href="index.html">Čemodāna kauss Talsos</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="index.html">Grafiks</a></li>
+                <li class="nav-item"><a class="nav-link" href="Tabulas.html">Tabulas</a></li>
+                <li class="nav-item"><a class="nav-link" href="FreeShotsK.html">Metienu konkurss Kungiem</a></li>
+                <li class="nav-item"><a class="nav-link" href="FreeShotsD.html">Metienu konkurss Dāmām</a></li>
+                <li class="nav-item"><a class="nav-link" href="Maps.html">Adreses</a></li>
+            </ul>
+        </div>
+    </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h2 class="text-center">Čemodāna kauss Talsos</h2>
+        <h3 class="text-center">2025</h3>
+        <div id="table-container" class="mt-4"></div>
+    </div>
+</body>
+</html>

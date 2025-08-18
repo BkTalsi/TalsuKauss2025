@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brīvo metienu konkurss</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        const sheetID = "1TpX7oRId-a7WD1PFH7aJoR9y6ConYYIWwWOYwMOmO-k";
+        const gid = "1378510021";
+        const query = encodeURIComponent("select G,H,I,S,T,U");
+        const apiURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&gid=${gid}&tq=${query}`;
+
+        async function fetchData() {
+            try {
+                const response = await fetch(apiURL);
+                const text = await response.text();
+                const jsonText = text.match(/\{.*\}/s)?.[0];
+                if (!jsonText) return;
+
+                const data = JSON.parse(jsonText);
+                const rows = data.table.rows;
+
+                // Separate rows into two tables
+                const threePointRows = rows.map(row => row.c.slice(0, 3).map(cell => cell?.v || ""));
+                const freeThrowRows = rows.map(row => row.c.slice(3, 6).map(cell => cell?.v || ""));
+
+                // Generate tables
+                const createTable = (headers, rows) => {
+                    let table = `<table class="table table-striped table-bordered">
+                                    <thead class="table-dark"><tr>`;
+                    headers.forEach(header => table += `<th>${header}</th>`);
+                    table += `</tr></thead><tbody>`;
+
+                    rows.forEach(row => {
+                        table += "<tr>";
+                        row.forEach(cell => table += `<td>${cell}</td>`);
+                        table += "</tr>";
+                    });
+
+                    table += "</tbody></table>";
+                    return table;
+                };
+
+                document.getElementById("three-point-container").innerHTML = createTable(["Komanda", "Spēlētāja", "Rezultāts"], threePointRows);
+                document.getElementById("free-throw-container").innerHTML = createTable(["Komanda", "Spēlētāja", "Rezultāts"], freeThrowRows);
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+
+        setInterval(fetchData, 5000);
+        window.onload = fetchData;
+    </script>
+</head>
+<body class="bg-light">
+        <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
+    <div class="container">
+        <img src="https://raw.githubusercontent.com/xxonara/Basket/main/talsu%20novads2.jpg" alt="Logo" class="navbar-logo" style="height: 40px; margin-right: 10px;">
+        <a class="navbar-brand" href="index.html">Čemodāna kauss Talsos</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="index.html">Grafiks</a></li>
+                <li class="nav-item"><a class="nav-link" href="Tabulas.html">Tabulas</a></li>
+                <li class="nav-item"><a class="nav-link" href="FreeShotsK.html">Metienu konkurss Kungiem</a></li>
+                <li class="nav-item"><a class="nav-link" href="FreeShotsD.html">Metienu konkurss Dāmām</a></li>
+                <li class="nav-item"><a class="nav-link" href="Maps.html">Adreses</a></li>
+            </ul>
+        </div>
+    </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row">
+            <!-- Left side: 3-punktu metieni -->
+            <div class="col-md-6">
+                <h3 class="text-center">🏀 3-punktu metieni</h3>
+                <div id="three-point-container" class="mt-3"></div>
+            </div>
+
+            <!-- Right side: Soda metieni -->
+            <div class="col-md-6">
+                <h3 class="text-center">🎯 Soda metieni</h3>
+                <div id="free-throw-container" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
