@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Bootstrap JS (this is REQUIRED for toggling navbar) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!--     <title>Čemodāna kauss Talsos - Vietas</title> -->
+</head>
+<body>
+<!--     <h1>Čemodāna kauss Talsos - Vietas</h1> -->
+    <div id="map"></div>
+
+     <script>
+        function initMap() {
+            const locations = [
+                { name: "Talsu Sporta Nams", address: "Kareivju iela 12, Talsi, Latvia", elementId: "map1" },
+                { name: "Vakara pasākums", address: "Stendes iela 5, Talsi, Talsu pilsēta, Talsu novads, LV-3201", elementId: "map2" },
+                { name: "Tuvākā ēdnīca - Bīne", address: "K.Valdemāra iela 13, Talsi, Talsu pilsēta, Talsu novads, LV-3201", elementId: "map3" },
+                { name: "Iesakām pārtikas veikalu ar ceptuvi", address: "Dundagas iela 21, Talsi, Talsu pilsēta, Talsu novads, LV-3201", elementId: "map4" }
+            ];
+
+            const geocoder = new google.maps.Geocoder();
+
+            locations.forEach(location => {
+                geocoder.geocode({ address: location.address }, (results, status) => {
+                    if (status === "OK") {
+                        const map = new google.maps.Map(document.getElementById(location.elementId), {
+                            zoom: 14,
+                            center: results[0].geometry.location
+                        });
+
+                        new google.maps.Marker({
+                            map: map,
+                            position: results[0].geometry.location
+                        });
+
+                        // Update the directions link
+                        const directionsLink = document.getElementById(location.elementId + "-link");
+                        directionsLink.href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(location.address)}`;
+                    } else {
+                        console.error("Geocode was not successful for: " + location.address);
+                    }
+                });
+            });
+        }
+    </script>
+</head>   
+    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
+    <div class="container">
+        <img src="https://raw.githubusercontent.com/BkTalsi/Cemodans/main/citro.jpg" alt="Logo" class="navbar-logo" style="height: 40px; margin-right: 1px;">
+        <img src="https://raw.githubusercontent.com/BkTalsi/Cemodans/main/talsu%20novads2.jpg" alt="Logo" class="navbar-logo" style="height: 40px; margin-right: 1px;">
+        <a class="navbar-brand" href="index.html">Čemodāna kauss Talsos</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="index.html">Grafiks</a></li>
+                <li class="nav-item"><a class="nav-link" href="Tabulas.html">Tabulas</a></li>
+                <li class="nav-item"><a class="nav-link" href="FreeShotsK.html">Metienu konkurss Kungiem</a></li>
+                <li class="nav-item"><a class="nav-link" href="FreeShotsD.html">Metienu konkurss Dāmām</a></li>
+                <li class="nav-item"><a class="nav-link" href="Maps.html">Adreses</a></li>
+            </ul>
+        </div>
+    </div>
+    </nav>
+
+<div class="container mt-5">
+        <h2 class="text-center">📍 Pasākumu Norises Vietas</h2>
+
+<!--         <h3 class="text-center mt-4">Norises vietas</h3> -->
+        <div class="map-container">
+            <div class="map-box">
+                <div class="map-header">Basketbols - Talsu Sporta Namā</div>
+                <div id="map1" class="map"></div>
+                <a id="map1-link" class="directions-link" target="_blank">➡️ Kareivju iela 12, Talsi</a>
+            </div>
+            <div class="map-box">
+                <div class="map-header">Baļļuks ar dzīvo mūziku</div>
+                <div id="map2" class="map"></div>
+                <a id="map2-link" class="directions-link" target="_blank">➡️ Stendes iela 5, Talsi</a>
+            </div>
+        </div>
+
+        <h3 class="text-center mt-4">Tuvas, labas un ātras vietas pusdienām</h3>
+        <div class="map-container">
+            <div class="map-box">
+                <div class="map-header" style="font-size: 20px !important;"><img src="https://raw.githubusercontent.com/xxonara/Basket/main/citro.jpg" alt="Logo" style="height: 50px; margin-right: 1px;">Veikals Citro</div>
+                <div id="map4" class="map"></div>
+                <a id="map4-link" class="directions-link" target="_blank">➡️ Dundagas iela 21, Talsi</a>
+            </div>
+            <div class="map-box">
+                <div class="map-header">Kafejnīca Bīne</div>
+                <div id="map3" class="map"></div>
+                <a id="map3-link" class="directions-link" target="_blank">➡️ K.Valdemāra iela 13, Talsi</a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="custom-footer">
+        <p>© 2025 Čemodāna kauss Talsos. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Google Maps API Key (replace 'AIzaSyByPI64vtBBvkMw7v0CQdM3sNspi4T8xLE' with your actual key) -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyByPI64vtBBvkMw7v0CQdM3sNspi4T8xLE&callback=initMap" async defer></script>
+</body>
+</html>
