@@ -11,12 +11,12 @@
     <link rel="icon" href="data:,">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const sheetID = "1TpX7oRId-a7WD1PFH7aJoR9y6ConYYIWwWOYwMOmO-k";
+        const sheetID = "1xXFGcFXoiVo6HYt7o4HDaRbhs5Q8v8mh4iVHKn5zBLQ";
         const gid = "187862000";
         const apiURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&gid=${gid}`;
 
-        const teamsKungi = ["TALSI", "JŪRMALA", "SALACGRĪVA", "SIGULDA"];
-        const teamsDamas = ["TALSI", "TUKUMS", "DOBELE", "CĒSIS"];
+        const teams2012 = ["TALSI", "JŪRMALA", "SALACGRĪVA", "SIGULDA"];
+        const teams2014 = ["TALSI", "TUKUMS", "DOBELE", "CĒSIS"];
 
         async function fetchData() {
             try {
@@ -28,33 +28,33 @@
 
                 const data = JSON.parse(jsonText);
                 const rows = data.table.rows;
-                const resultsKungi = {};
-                const resultsDamas = {};
-                const teamPointsKungi = {}; // For Kungi
-                const teamPointsDamas = {}; // For Dāmas
+                const results2012 = {};
+                const results2014 = {};
+                const teamPoints2012 = {}; // For 2012.g
+                const teamPoints2014 = {}; // For 2014.g
                 const vietaValues = rows.map(row => row.c[25]?.v || "");
-                const vietaValuesKungi = vietaValues.slice(0, 4); // First 4 rows for Kungi
-                const vietaValuesDamas = vietaValues.slice(4, 8); // Last 4 rows for Damas
+                const vietaValues2012 = vietaValues.slice(0, 4); // First 4 rows for 2012.g
+                const vietaValues2014 = vietaValues.slice(4, 8); // Last 4 rows for 2014.g
 
-                teamsKungi.forEach((team, index) => {
-                    resultsKungi[team] = { Vieta: vietaValues[index] };
+                teams2012.forEach((team, index) => {
+                    results2012[team] = { Vieta: vietaValues[index] };
                 });
                 
-                teamsDamas.forEach((team, index) => {
-                    resultsDamas[team] = { Vieta: vietaValues[index + 4] }; // Offset by 4 for Damas
+                teams2014.forEach((team, index) => {
+                    results2014[team] = { Vieta: vietaValues[index + 4] }; // Offset by 4 for 2014
                 });
                 
                 // Debugging output
                 console.log("Vietas:", vietaValues );
-                // console.log("Results Damas:", resultsDamas);
+                // console.log("Results 2014:", results2014);
                 
                 // Initialize team points for both tables
-                teamsKungi.forEach(team => teamPointsKungi[team] = 0);
-                teamsDamas.forEach(team => teamPointsDamas[team] = 0);
+                teams2012.forEach(team => teamPoints2012[team] = 0);
+                teams2014.forEach(team => teamPoints2014[team] = 0);
                 rows.forEach(row => {
                     const teamA = row.c[4]?.v;
                     const teamB = row.c[7]?.v;
-                    const gender = row.c[3]?.v; // Column [3] contains "K" or "D"
+                    const group = row.c[3]?.v; // Column [3] contains "2012.g" or "2014.g"
                     let scoreA = row.c[5]?.v;
                     let scoreB = row.c[6]?.v;
                     let zeroIndic;
@@ -66,7 +66,7 @@
                         zeroIndic = "";
                     }
 
-                    if (teamA && teamB && gender) {
+                    if (teamA && teamB && group) {
                         let pointsA = 0;
                         let pointsB = 0;
 
@@ -87,16 +87,16 @@
                                 }
                             }
 
-                            if (gender === "K" && teamsKungi.includes(teamA) && teamsKungi.includes(teamB)) {
-                                resultsKungi[`${teamA}-${teamB}`] = { result: `${scoreA}:${scoreB}`, points: pointsA };
-                                resultsKungi[`${teamB}-${teamA}`] = { result: `${scoreB}:${scoreA}`, points: pointsB };
-                                teamPointsKungi[teamA] += pointsA;
-                                teamPointsKungi[teamB] += pointsB;
-                            } else if (gender === "D" && teamsDamas.includes(teamA) && teamsDamas.includes(teamB)) {
-                                resultsDamas[`${teamA}-${teamB}`] = { result: `${scoreA}:${scoreB}`, points: pointsA  };
-                                resultsDamas[`${teamB}-${teamA}`] = { result: `${scoreB}:${scoreA}`, points: pointsB  };
-                                teamPointsDamas[teamA] += pointsA;
-                                teamPointsDamas[teamB] += pointsB;
+                            if (group === "2012. g" && teams2012.includes(teamA) && teams2012.includes(teamB)) {
+                                results2012[`${teamA}-${teamB}`] = { result: `${scoreA}:${scoreB}`, points: pointsA };
+                                results2012[`${teamB}-${teamA}`] = { result: `${scoreB}:${scoreA}`, points: pointsB };
+                                teamPoints2012[teamA] += pointsA;
+                                teamPoints2012[teamB] += pointsB;
+                            } else if (group === "2014. g" && teams2014.includes(teamA) && teams2014.includes(teamB)) {
+                                results2014[`${teamA}-${teamB}`] = { result: `${scoreA}:${scoreB}`, points: pointsA  };
+                                results2014[`${teamB}-${teamA}`] = { result: `${scoreB}:${scoreA}`, points: pointsB  };
+                                teamPoints2014[teamA] += pointsA;
+                                teamPoints2014[teamB] += pointsB;
                             }
                         }
                     }
@@ -147,12 +147,12 @@
                 }
 
                 // Generate the two tables
-                const tableHTMLKungi = generateTable(teamsKungi, resultsKungi, teamPointsKungi, vietaValuesKungi);
-                const tableHTMLDamas = generateTable(teamsDamas, resultsDamas, teamPointsDamas, vietaValuesDamas);
+                const tableHTML2012 = generateTable(teams2012, results2012, teamPoints2012, vietaValues2012);
+                const tableHTMLDamas = generateTable(teams2014, results2014, teamPoints2014, vietaValues2014);
 
                 // Display the tables
-                document.getElementById("kungi-table").innerHTML = tableHTMLKungi;
-                document.getElementById("dama-table").innerHTML = tableHTMLDamas;
+                document.getElementById("2012-table").innerHTML = tableHTML2012;
+                document.getElementById("2014-table").innerHTML = tableHTML2014;
 
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -166,9 +166,9 @@
 <body class="bg-light">
         <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
     <div class="container">
-        <img src="https://raw.githubusercontent.com/BkTalsi/Cemodans/main/citro.jpg" alt="Logo" class="navbar-logo" style="height: 40px; margin-right: 1px;">
-        <img src="https://raw.githubusercontent.com/BkTalsi/Cemodans/main/talsu%20novads2.jpg" alt="Logo" class="navbar-logo" style="height: 40px; margin-right: 1px;">
-        <a class="navbar-brand" href="index.html">Čemodāna kauss Talsos</a>
+        <img src="https://raw.githubusercontent.com/BkTalsi/TalsuKauss2025/main/citro.jpg" alt="Logo" class="navbar-logo" style="height: 40px; margin-right: 1px;">
+        <img src="https://raw.githubusercontent.com/BkTalsi/TalsuKauss2025/main/talsu%20novads2.jpg" alt="Logo" class="navbar-logo" style="height: 40px; margin-right: 1px;">
+        <a class="navbar-brand" href="index.html">Talsu kauss 2025</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -176,22 +176,22 @@
             <ul class="navbar-nav">
                 <li class="nav-item"><a class="nav-link" href="index.html">Grafiks</a></li>
                 <li class="nav-item"><a class="nav-link" href="Tabulas.html">Tabulas</a></li>
-                <li class="nav-item"><a class="nav-link" href="FreeShotsK.html">Metienu konkurss Kungiem</a></li>
-                <li class="nav-item"><a class="nav-link" href="FreeShotsD.html">Metienu konkurss Dāmām</a></li>
+                <li class="nav-item"><a class="nav-link" href="FreeShotsK.html">Metieni 2012.g.dz</a></li>
+                <li class="nav-item"><a class="nav-link" href="FreeShotsD.html">Metieni 2014.g.dz</a></li>
                 <li class="nav-item"><a class="nav-link" href="Maps.html">Adreses</a></li>
             </ul>
         </div>
     </div>
     </nav>
     <div class="container mt-5">
-        <h2 class="text-center">Kungi</h2>
+        <h2 class="text-center">2012. gadā dzimušie</h2>
         <div id="kungi-table"></div>
 
-        <h2 class="text-center mt-5">Dāmas</h2>
+        <h2 class="text-center mt-5">2014. gadā dzimušie</h2>
         <div id="dama-table"></div>
     </div>
 </body>
 <footer class="custom-footer">
-    <p>© 2025 Čemodāna kauss Talsos. All Rights Reserved.</p>
+    <p>© Talsu kauss 2025. All Rights Reserved.</p>
 </footer>
 </html>
