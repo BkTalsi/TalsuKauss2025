@@ -7,19 +7,14 @@
     padding: 0; /* Remove extra space */
     border: none;
 }
-/* .table td img {
-    width: 100%;         /* Scale image to fit the width of the td 
-    height: auto;        /* Maintain the aspect ratio of the image 
-    object-fit: contain; /* Ensure the image fits without stretching 
-} */
 .image-cell {
-            background-image:
-url('https://raw.githubusercontent.com/xxonara/Basket/main/bk%20talsi.jpg');
-            background-size: contain;
-            background-position: center;
-            background-repeat: no-repeat;
-            height: 50px; }
-    
+    background-image: url('https://raw.githubusercontent.com/xxonara/Basket/main/bk%20talsi.jpg');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 50px;
+}
+
 .diagonal-cell img {
     max-width: 100%; /* Allow image to take full width of cell */
     max-height: 100%; /* Allow image to take full height of cell */
@@ -52,7 +47,6 @@ url('https://raw.githubusercontent.com/xxonara/Basket/main/bk%20talsi.jpg');
     text-align: center;
     border: 1px solid #ddd;
     width: 15%; /* Ensures equal column width */
-    /*white-space: nowrap; /* Prevents text wrapping */
     font-size: 14px; /* Adjust text size for better fit */
     min-height: 50px;
     height: auto; /* Reduce row height */
@@ -76,10 +70,6 @@ url('https://raw.githubusercontent.com/xxonara/Basket/main/bk%20talsi.jpg');
 .navbar-nav .nav-item {
     margin-right: 30px; /* Add space between navigation items */
 }
-
-/* .custom-navbar .navbar-brand {
-    margin-right: 50px; /* Adjust this value to create more space 
-} */
 
 .custom-footer {
     background-color: #027669 !important; /* Teal */
@@ -116,195 +106,192 @@ body {
     padding-bottom: 80px; /* Prevent footer overlap */
 }
 .map-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            max-width: 1000px; /* Keeps maps from being too wide */
-            margin: auto;
-        }
-        .map-box {
-            width: 45%;
-            height: 400px;
-            position: relative;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            padding: 20px;
-        }
-        .map {
-            width: 100%;
-/*             height: 100%; */
-            flex-grow: 1; /* Ensures the map expands inside the box */
-            height: 250px; /* Smaller maps */
-            border-radius: 8px;
-        }
-        .map-header {
-            font-size: 18px;
-            text-align: center;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .directions-link {
-            display: block;
-            margin-top: 10px;
-            font-size: 16px;
-            color: #007bff;
-            text-decoration: none;
-        }
-        @media (max-width: 768px) {
-            .map-box {
-                width: 100%;
-                grid-template-columns: 1fr; /* 1 column on small screens */
-            }
-        }
-
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    max-width: 1000px; /* Keeps maps from being too wide */
+    margin: auto;
+}
+.map-box {
+    width: 45%;
+    height: 400px;
+    position: relative;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding: 20px;
+}
+.map {
+    width: 100%;
+    flex-grow: 1; /* Ensures the map expands inside the box */
+    height: 250px; /* Smaller maps */
+    border-radius: 8px;
+}
+.map-header {
+    font-size: 18px;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.directions-link {
+    display: block;
+    margin-top: 10px;
+    font-size: 16px;
+    color: #007bff;
+    text-decoration: none;
+}
+@media (max-width: 768px) {
+    .map-box {
+        width: 100%;
+        grid-template-columns: 1fr; /* 1 column on small screens */
+    }
+}
 /* New Bracket Layout */
 .brkt {
-  display: grid;
-  grid-template-columns: minmax(260px, 1fr) 40px minmax(260px, 1fr);
-  column-gap: 24px;
-  align-items: start;
-  margin-top: 12px;
+    display: grid;
+    grid-template-columns: minmax(260px, 1fr) 40px minmax(260px, 1fr);
+    column-gap: 24px;
+    align-items: start;
+    margin-top: 12px;
 }
 
 .brkt-left,
 .brkt-right {
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-  position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    position: relative;
 }
 
 /* Slot Styles (the boxes) */
 .brkt .slot {
-  background: #f8f9fa;
-  border: 2px solid #027669;
-  border-radius: 8px;
-  padding: 6px 10px;
-  min-width: 180px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  font-weight: 700;
-  font-size: 14px;
-  position: relative;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    background: #f8f9fa;
+    border: 2px solid #027669;
+    border-radius: 8px;
+    padding: 6px 10px;
+    min-width: 180px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    font-size: 14px;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 /* Left Column: two stacked pairs */
 .pair {
-  --slot-h: 44px;
-  --gap: 12px;
-  position: relative;
-  padding-right: 40px;
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap);
+    --slot-h: 44px;
+    --gap: 12px;
+    position: relative;
+    padding-right: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
 }
 
 /* Horizontal arms from each slot into the middle rail */
 .pair .slot.up::after,
 .pair .slot.dn::after {
-  content: "";
-  position: absolute;
-  right: -40px;
-  top: calc(var(--slot-h) / 2 - 1px);
-  width: 40px;
-  height: 2px;
-  background: #c9c9c9;
+    content: "";
+    position: absolute;
+    right: -40px;
+    top: calc(var(--slot-h) / 2 - 1px);
+    width: 40px;
+    height: 2px;
+    background: #c9c9c9;
 }
 
 /* Vertical line connecting the two horizontals */
 .pair::after {
-  content: "";
-  position: absolute;
-  right: -40px;
-  top: calc(var(--slot-h) / 2);
-  width: 2px;
-  height: calc(var(--slot-h) + var(--gap));
-  background: #c9c9c9;
+    content: "";
+    position: absolute;
+    right: -40px;
+    top: calc(var(--slot-h) / 2);
+    width: 2px;
+    height: calc(var(--slot-h) + var(--gap));
+    background: #c9c9c9;
 }
 
 /* Result bubble at the join */
 .mini-knot {
-  position: absolute;
-  right: -40px;
-  top: calc(var(--slot-h) + var(--gap) / 2);
-  transform: translate(8px, -50%);
-  font-size: 12px;
-  background: #fff;
-  padding: 2px 6px;
-  border-radius: 6px;
-  border: 1px solid #e5e5e5;
-  white-space: nowrap;
+    position: absolute;
+    right: -40px;
+    top: calc(var(--slot-h) + var(--gap) / 2);
+    transform: translate(8px, -50%);
+    font-size: 12px;
+    background: #fff;
+    padding: 2px 6px;
+    border-radius: 6px;
+    border: 1px solid #e5e5e5;
+    white-space: nowrap;
 }
 .mini-knot .mini-win {
-  font-weight: 700;
-  margin-left: 6px;
-  color: #e4312a;
+    font-weight: 700;
+    margin-left: 6px;
+    color: #e4312a;
 }
 
 /* Right Column: the final knot */
 .knot {
-  position: relative;
-  padding-left: 40px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+    position: relative;
+    padding-left: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 /* Incoming line from rail into the knot center */
 .knot::before {
-  content: "";
-  position: absolute;
-  left: -40px;
-  top: calc((44px + 8px) / 2);
-  width: 40px;
-  height: 2px;
-  background: #c9c9c9;
+    content: "";
+    position: absolute;
+    left: -40px;
+    top: calc((44px + 8px) / 2);
+    width: 40px;
+    height: 2px;
+    background: #c9c9c9;
 }
 
 /* Text styles for results */
 .knot .result {
-  font-size: 13px;
-  margin-left: 2px;
-  color: #333;
+    font-size: 13px;
+    margin-left: 2px;
+    color: #333;
 }
 .knot .winner {
-  font-size: 13px;
-  font-weight: 700;
-  color: #e4312a;
-  margin-left: 2px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #e4312a;
+    margin-left: 2px;
 }
 
 /* Mobile Tweaks */
 @media (max-width: 768px) {
-  .brkt {
-    grid-template-columns: 1fr;
-    row-gap: 18px;
-  }
-  .pair {
-    padding-right: 24px;
-  }
-  .pair .slot.up::after,
-  .pair .slot.dn::after {
-    right: -24px;
-    width: 24px;
-  }
-  .pair::after {
-    right: -24px;
-  }
-  .mini-knot {
-    right: -24px;
-  }
-  .knot {
-    padding-left: 24px;
-  }
-  .knot::before {
-    left: -24px;
-    width: 24px;
-  }
+    .brkt {
+        grid-template-columns: 1fr;
+        row-gap: 18px;
+    }
+    .pair {
+        padding-right: 24px;
+    }
+    .pair .slot.up::after,
+    .pair .slot.dn::after {
+        right: -24px;
+        width: 24px;
+    }
+    .pair::after {
+        right: -24px;
+    }
+    .mini-knot {
+        right: -24px;
+    }
+    .knot {
+        padding-left: 24px;
+    }
+    .knot::before {
+        left: -24px;
+        width: 24px;
+    }
 }
-
