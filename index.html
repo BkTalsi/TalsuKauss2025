@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Google Sheets Table</title>
+  <title>Table</title>
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <style>
@@ -22,12 +21,20 @@
       gap: 2rem;
     }
     table {
-      width: auto; /* Fit to content */
+      table-layout: auto; 
+      width: auto; /* shrink to fit content */
       margin: auto;
     }
     td, th {
-      white-space: nowrap; /* Prevents breaking into multiple lines */
       text-align: center;
+      padding: 4px 8px; 
+    }
+    /* make small columns compact */
+    th:nth-child(1), td:nth-child(1),  /* Datums */
+    th:nth-child(2), td:nth-child(2),  /* Laiks */
+    th:nth-child(3), td:nth-child(3) { /* Grupa */
+      white-space: nowrap;
+      width: 1%;
     }
   </style>
 
@@ -81,7 +88,7 @@
         const groupedData = {};
         data.table.rows.forEach((row, rowIndex) => {
           if (!row.c[0] || !row.c[0].v) return;
-          const date = row.c[0].v; // Column B value (date string like "22. augusts, 2025")
+          const date = row.c[0].v; 
           const cells = row.c.filter((_, colIndex) => colIndex !== 6)
                              .map((cell, colIndex) => formatCell(cell, rowIndex, colIndex));
 
@@ -100,7 +107,12 @@
           table += `</tr></thead><tbody>`;
 
           rows.forEach(row => {
-            table += "<tr>";
+            let group = row[2]; // "Grupa" column (3rd col)
+            let rowColor = "";
+            if (group === "2012. g") rowColor = "background-color:#6debd6;";
+            if (group === "2014. g") rowColor = "background-color:#6dc1eb;";
+
+            table += `<tr style="${rowColor}">`;
             row.forEach(cell => table += `<td>${cell}</td>`);
             table += "</tr>";
           });
@@ -124,22 +136,21 @@
   <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
     <div class="container">
       <img src="https://raw.githubusercontent.com/BkTalsi/TalsuKauss2025/main/talsu%20novads2.jpg" alt="Logo" class="navbar-logo" style="height: 40px; margin-right: 1px;">
-      <a class="navbar-brand" href="index.html">Talsu kauss 2025</a>
+      <a class="navbar-brand" href="index.html">Talsi Cup 2025</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
-          <li class="nav-item"><a class="nav-link" href="index.html">Grafiks</a></li>
-          <li class="nav-item"><a class="nav-link" href="Tabulas.html">Tabulas</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html">Schedule</a></li>
+          <li class="nav-item"><a class="nav-link" href="Tabulas.html">Standings</a></li>
         </ul>
       </div>
     </div>
   </nav>
 
   <div class="container mt-5">
-    <h2 class="text-center">Talsu kauss 2025</h2>
-    <h3 class="text-center">22.-24. augusts, 2025</h3>
+    <h2 class="text-center">Talsi Cup 2025</h2>
     <div id="table-container" class="table-container mt-4"></div>
   </div>
 </body>
