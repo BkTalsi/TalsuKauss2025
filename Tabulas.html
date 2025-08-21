@@ -15,8 +15,8 @@
         const gid = "187862000";
         const apiURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&gid=${gid}`;
 
-        const teams2012 = ["JUGLA", "TALSI MIX", "KOHILA SK", "TALSI"];
-        const teams2014 = ["TUKUMS", "TALSI 2013", "KOHILA SK/RAPLA KK", "TALSI"];
+        const teams2012 = ["JUGLA", "TALSI MIX", "KOHILA SK", "TALSI","RĪDZENE"];
+        const teams2014 = ["TUKUMS", "TALSI 2013", "KOHILA SK/RAPLA KK", "TALSI", "RĪDZENE"];
 
         async function fetchData() {
             try {
@@ -33,15 +33,15 @@
                 const teamPoints2012 = {}; // For 2012.g
                 const teamPoints2014 = {}; // For 2014.g
                 const vietaValues = rows.map(row => row.c[25]?.v || "");
-                const vietaValues2012 = vietaValues.slice(0, 4); // First 4 rows for 2012.g
-                const vietaValues2014 = vietaValues.slice(4, 8); // Last 4 rows for 2014.g
+                const vietaValues2012 = vietaValues.slice(0, 5); // First 4 rows for 2012.g
+                const vietaValues2014 = vietaValues.slice(5, 10); // Last 4 rows for 2014.g
 
                 teams2012.forEach((team, index) => {
                     results2012[team] = { Vieta: vietaValues[index] };
                 });
                 
                 teams2014.forEach((team, index) => {
-                    results2014[team] = { Vieta: vietaValues[index + 4] }; // Offset by 4 for 2014
+                    results2014[team] = { Vieta: vietaValues[index + 5] }; // Offset by 4 for 2014
                 });
                 
                 // Debugging output
