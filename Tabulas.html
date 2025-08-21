@@ -51,7 +51,8 @@
                 // Initialize team points for both tables
                 teams2012.forEach(team => teamPoints2012[team] = 0);
                 teams2014.forEach(team => teamPoints2014[team] = 0);
-                rows.forEach(row => {
+                const limitedRows = rows.slice(0, 21);
+                limitedRows.forEach(row => {
                     const teamA = row.c[4]?.v;
                     const teamB = row.c[7]?.v;
                     const group = row.c[3]?.v; // Column [3] contains "2012.g" or "2014.g"
