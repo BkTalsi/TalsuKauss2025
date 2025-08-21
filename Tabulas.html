@@ -6,8 +6,6 @@
     <title>Match Matrix</title>
     <link rel="stylesheet" href="styles.css"> <!-- External CSS for custom styling -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <!--<link rel="stylesheet" href="styles.css"> -->
-    <!-- Bootstrap JS (this is REQUIRED for toggling navbar) -->
     <link rel="icon" href="data:,">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -17,123 +15,42 @@
 
         const teams2012 = ["JUGLA", "TALSI MIX", "KOHILA SK", "TALSI","RĪDZENE"];
         const teams2014 = ["TUKUMS", "TALSI 2013", "KOHILA SK/RAPLA KK", "TALSI", "RĪDZENE"];
-function generateBracket(teams, vietaValues, rows, group) {
-  const knockoutRows = rows
-    .slice(21, 26)
-    .filter(r => (r.c[3]?.v || "").trim() === (group || "").trim());
 
-  const toPlaceholder = v => {
-    const n = String(v ?? "").match(/\d+/)?.[0];
-    return n ? `${n}.v.` : "";
-  };
-
-  const placeMap = {};
-  teams.forEach((team, idx) => {
-    const key = toPlaceholder(vietaValues[idx]);
-    if (key) placeMap[key] = team;
-  });
-
-  const getRowByGame = (...ids) =>
-    knockoutRows.find(r => ids.includes((r.c[14]?.v || "").trim()));
-
-  // ---- Game 1: 2.v vs 3.v ----
-  const topPairRow = getRowByGame("2.v.-3.v.", "3.v.-2.v.");
-  const topOK = topPairRow?.c[10]?.v === "OK";
-  const topResult = topOK ? (topPairRow.c[8]?.v || "") : "";
-  const topWinner = topOK ? (topPairRow.c[9]?.v || "") : "";
-
-  // ---- Game 2: 4.v vs 5.v ----
-  const botPairRow = getRowByGame("4.v.-5.v.", "5.v.-4.v.");
-  const botOK = botPairRow?.c[10]?.v === "OK";
-  const botResult = botOK ? (botPairRow.c[8]?.v || "") : "";
-  const botWinner = botOK ? (botPairRow.c[9]?.v || "") : "";
-
-  // ---- Game 3: 1.v vs Winner(2.v-3.v) ----
-  const finalRow = topOK ? getRowByGame(`1.v.-${topWinner}`, `${topWinner}-1.v.`) : null;
-  const finalOK = finalRow?.c[10]?.v === "OK";
-  const finalResult = finalOK ? finalRow.c[8]?.v || "" : "";
-  const finalWinner = finalOK ? finalRow.c[9]?.v || "" : "";
-
-  const label = pl => (placeMap[pl] ? `${pl} ${placeMap[pl]}` : pl);
-  const winnerLabel = w => (placeMap[w] ? placeMap[w] : w);
-  const finalWinnerLabel = finalOK ? `Winner: ${finalWinner}` : "Winner";
-
-  return `
-    <div class="brkt">
-      <div class="brkt-column brkt-column-1">
-        <div class="pair pair-top">
-          <div class="slot">${label("2.v.")}</div>
-          <div class="slot">${label("3.v.")}</div>
-        </div>
-        <div class="pair pair-bottom">
-          <div class="slot">${label("4.v.")}</div>
-          <div class="slot">${label("5.v.")}</div>
-        </div>
-      </div>
-      <div class="brkt-column brkt-column-2">
-        <div class="pair pair-semifinal">
-          <div class="slot">${label("1.v.")}</div>
-          <div class="result-bubble">${finalOK ? finalResult : ""}</div>
-          <div class="slot">${topOK ? winnerLabel(topWinner) : "Winner 2.v.-3.v."}</div>
-        </div>
-        <div class="single-slot">
-          <div class="slot">${botOK ? winnerLabel(botWinner) : "Winner 4.v.-5.v."}</div>
-        </div>
-      </div>
-      <div class="brkt-column brkt-column-3">
-        <div class="slot final-winner-slot">${finalWinnerLabel}</div>
-      </div>
-    </div>
-  `;
-}
         async function fetchData() {
             try {
                 const response = await fetch(apiURL);
                 const text = await response.text();
                 const jsonText = text.match(/\{.*\}/s)?.[0];
                 if (!jsonText) return;
-                
 
                 const data = JSON.parse(jsonText);
                 const rows = data.table.rows;
                 const results2012 = {};
                 const results2014 = {};
-                const teamPoints2012 = {}; // For 2012.g
-                const teamPoints2014 = {}; // For 2014.g
+                const teamPoints2012 = {};
+                const teamPoints2014 = {};
                 const vietaValues = rows.map(row => row.c[25]?.v || "");
-                const vietaValues2012 = vietaValues.slice(0, 5); // First 4 rows for 2012.g
-                const vietaValues2014 = vietaValues.slice(5, 10); // Last 4 rows for 2014.g
+                const vietaValues2012 = vietaValues.slice(0, 5);
+                const vietaValues2014 = vietaValues.slice(5, 10);
 
                 teams2012.forEach((team, index) => {
                     results2012[team] = { Vieta: vietaValues[index] };
+                    teamPoints2012[team] = 0;
                 });
-                
+
                 teams2014.forEach((team, index) => {
-                    results2014[team] = { Vieta: vietaValues[index + 5] }; // Offset by 4 for 2014
+                    results2014[team] = { Vieta: vietaValues[index + 5] };
+                    teamPoints2014[team] = 0;
                 });
-                
-                // Debugging output
-                console.log("Vietas:", vietaValues );
-                // console.log("Results 2014:", results2014);
-                
-                // Initialize team points for both tables
-                teams2012.forEach(team => teamPoints2012[team] = 0);
-                teams2014.forEach(team => teamPoints2014[team] = 0);
+
                 const limitedRows = rows.slice(0, 20);
                 limitedRows.forEach(row => {
                     const teamA = row.c[4]?.v;
                     const teamB = row.c[7]?.v;
-                    const group = row.c[3]?.v; // Column [3] contains "2012.g" or "2014.g"
+                    const group = row.c[3]?.v;
                     let scoreA = row.c[5]?.v;
                     let scoreB = row.c[6]?.v;
-                    let zeroIndic;
-
-                    
-                    if (row.c[11] !== null && row.c[11] !== undefined) {
-                        zeroIndic = String(row.c[11]?.v).trim();
-                    } else {
-                        zeroIndic = "";
-                    }
+                    let zeroIndic = row.c[11] ? String(row.c[11]?.v).trim() : "";
 
                     if (teamA && teamB && group) {
                         let pointsA = 0;
@@ -162,15 +79,15 @@ function generateBracket(teams, vietaValues, rows, group) {
                                 teamPoints2012[teamA] += pointsA;
                                 teamPoints2012[teamB] += pointsB;
                             } else if (group === "2014. g" && teams2014.includes(teamA) && teams2014.includes(teamB)) {
-                                results2014[`${teamA}-${teamB}`] = { result: `${scoreA}:${scoreB}`, points: pointsA  };
-                                results2014[`${teamB}-${teamA}`] = { result: `${scoreB}:${scoreA}`, points: pointsB  };
+                                results2014[`${teamA}-${teamB}`] = { result: `${scoreA}:${scoreB}`, points: pointsA };
+                                results2014[`${teamB}-${teamA}`] = { result: `${scoreB}:${scoreA}`, points: pointsB };
                                 teamPoints2014[teamA] += pointsA;
                                 teamPoints2014[teamB] += pointsB;
                             }
                         }
                     }
                 });
-                // Helper function to generate table
+
                 function generateTable(teams, results, teamPoints, vietaValues) {
                     let tableHTML = `<table class="table table-bordered text-center">
                                         <thead>
@@ -183,21 +100,15 @@ function generateBracket(teams, vietaValues, rows, group) {
                                         <tbody>`;
 
                     teams.forEach((rowTeam, rowIndex) => {
-                        const teamVieta = vietaValues[rowIndex] || ""; // Get the `Vieta` value by row order
-                        //console.log(`Row ${rowIndex + 1}: Vieta = ${teamVieta}`); // Debugging output
+                        const teamVieta = vietaValues[rowIndex] || "";
                         tableHTML += `<tr><th>${rowTeam}</th>`;
                         teams.forEach((colTeam, colIndex) => {
                             if (rowIndex === colIndex) {
                                 tableHTML += `<td class="image-cell"></td>`;
-                                 // <img style="display:block;" src="https://raw.githubusercontent.com/xxonara/Basket/main/citro.jpg">
                             } else {
                                 const match = results[`${rowTeam}-${colTeam}`];
                                 if (match) {
-                                    const displayResult = (match.result === ':' || match.result === '0:20' || match.result === '20:0') 
-                                    ? `<strong ${match.points === 2 ? 'style="color: red;"' : ''}>${match.points}</strong><br>${match.result}`
-                                    : `<strong ${match.points === 2 ? 'style="color: red;"' : ''}>${match.points}</strong><br>${match.result}`;
-                                    // ? `<strong>${match.points}</strong><br>${match.result}` 
-                                    // : `<strong>${match.points}</strong><br>${match.result}`;
+                                    const displayResult = `<strong ${match.points === 2 ? 'style="color: red;"' : ''}>${match.points}</strong><br>${match.result}`;
                                     tableHTML += `<td>${displayResult}</td>`;
                                 } else {
                                     tableHTML += `<td><strong>0</strong><br>:</td>`;
@@ -205,8 +116,6 @@ function generateBracket(teams, vietaValues, rows, group) {
                             }
                         });
                         tableHTML += `<td><strong>${teamPoints[rowTeam]}</strong></td>`;
-                        // const teamVieta = resultsKungi[rowTeam]?.Vieta || resultsDamas[rowTeam]?.Vieta || "";
-                        // console.log(`Row team: ${rowTeam}, Vieta: ${teamVieta}`);
                         tableHTML += `<td style="font-weight: bold; font-size: 20px;">${teamVieta}</td>`;
                         tableHTML += `</tr>`;
                     });
@@ -215,65 +124,43 @@ function generateBracket(teams, vietaValues, rows, group) {
                     return tableHTML;
                 }
 
-                // Generate the two tables
-                const tableHTML2012 = generateTable(teams2012, results2012, teamPoints2012, vietaValues2012);
-                const tableHTML2014 = generateTable(teams2014, results2014, teamPoints2014, vietaValues2014);
-                // Generate bracket HTML
-                const bracketHTML2012 = generateBracket(teams2012, vietaValues2012, rows, "2012. g");
-                const bracketHTML2014 = generateBracket(teams2014, vietaValues2014, rows, "2014. g");
-
-                // Display the tables
-                document.getElementById("2012-table").innerHTML = tableHTML2012;
-                document.getElementById("2014-table").innerHTML = tableHTML2014;
-                // Display the brackets
-                document.getElementById("2012-bracket").innerHTML = bracketHTML2012;
-                document.getElementById("2014-bracket").innerHTML = bracketHTML2014;
+                // Generate tables only
+                document.getElementById("2012-table").innerHTML = generateTable(teams2012, results2012, teamPoints2012, vietaValues2012);
+                document.getElementById("2014-table").innerHTML = generateTable(teams2014, results2014, teamPoints2014, vietaValues2014);
 
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
         }
 
-        setInterval(fetchData, 10000); // Refresh data every 5 seconds
+        setInterval(fetchData, 10000); // Refresh data every 10 seconds
         window.onload = fetchData;
     </script>
 </head>
 <body class="bg-light">
-        <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
-    <div class="container">
-        <img src="https://raw.githubusercontent.com/BkTalsi/TalsuKauss2025/main/talsu%20novads2.jpg" alt="Logo" class="navbar-logo" style="height: 40px; margin-right: 1px;">
-        <a class="navbar-brand" href="index.html">Talsi Cup 2025</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link" href="index.html">Schedule</a></li>
-                <li class="nav-item"><a class="nav-link" href="Tabulas.html">Standings</a></li>
-            </ul>
+    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
+        <div class="container">
+            <img src="https://raw.githubusercontent.com/BkTalsi/TalsuKauss2025/main/talsu%20novads2.jpg" alt="Logo" class="navbar-logo" style="height: 40px; margin-right: 1px;">
+            <a class="navbar-brand" href="index.html">Talsi Cup 2025</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Schedule</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Tabulas.html">Standings</a></li>
+                    <li class="nav-item"><a class="nav-link" href="PlayOffs.html">PlayOffs</a></li>
+                </ul>
+            </div>
         </div>
-    </div>
     </nav>
+
     <div class="container mt-5">
-      <h2 class="text-center">Group 2012. g</h2>
-        <div class="row mt-3">
-          <div class="col-md-8">
-            <div id="2012-table"></div>
-          </div>
-          <div class="col-md-4">
-            <div id="2012-bracket"></div>
-          </div>
-        </div>
-    
-      <h2 class="text-center mt-5">Group 2014. g</h2>
-      <div class="row mt-3">
-        <div class="col-md-8">
-          <div id="2014-table"></div>
-        </div>
-        <div class="col-md-4">
-          <div id="2014-bracket"></div>
-        </div>
-      </div>
+        <h2 class="text-center">Group 2012. g</h2>
+        <div id="2012-table" class="mt-3"></div>
+
+        <h2 class="text-center mt-5">Group 2014. g</h2>
+        <div id="2014-table" class="mt-3"></div>
     </div>
 </body>
 <footer class="custom-footer">
