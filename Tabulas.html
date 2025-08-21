@@ -18,8 +18,10 @@
         const teams2012 = ["JUGLA", "TALSI MIX", "KOHILA SK", "TALSI","RĪDZENE"];
         const teams2014 = ["TUKUMS", "TALSI 2013", "KOHILA SK/RAPLA KK", "TALSI", "RĪDZENE"];
         function generateBracket(teams, vietaValues, rows, group) {
-          // Rows 22–27 from the whole sheet, then keep the ones for this group
-          const knockoutRows = rows.slice(21, 26).filter(r => (r.c[3]?.v || "").trim() === (group || "").trim());
+          // Rows 22–26 (knockout games) from the whole sheet
+          const knockoutRows = rows
+            .slice(21, 26)
+            .filter(r => (r.c[3]?.v || "").trim() === (group || "").trim());
         
           // Normalize table "Vieta" values to placeholders like "2.v."
           const toPlaceholder = v => {
@@ -34,22 +36,21 @@
             if (key) placeMap[key] = team;
           });
         
-          // Helper: find a knockout row by GameID (col[14]) — try both orders
-          const getRowByGame = (...ids) => knockoutRows.find(r => ids.includes((r.c[14]?.v || "").trim()));
+          // Helper: find a knockout row by GameID (col[14])
+          const getRowByGame = (...ids) =>
+            knockoutRows.find(r => ids.includes((r.c[14]?.v || "").trim()));
         
           // ----- TOP PAIR: 2.v. vs 3.v. -----
           const topPairRow = getRowByGame("2.v.-3.v.", "3.v.-2.v.");
           const topOK = topPairRow?.c[10]?.v === "OK";
           const topResult = topOK ? (topPairRow.c[8]?.v || "") : "";
           const topWinner = topOK ? (topPairRow.c[9]?.v || "") : "";
-          // Determine which placeholder the winner belongs to (2.v. or 3.v.)
           const topWinnerPlace = topOK
             ? (topWinner === placeMap["2.v."] ? "2.v." : topWinner === placeMap["3.v."] ? "3.v." : "")
             : "";
         
           // ----- RIGHT KNOT: 1.v. vs Winner(2–3) -----
           const oneVLabel = placeMap["1.v."] ? `1.v. ${placeMap["1.v."]}` : "1.v.";
-          // If we already know the winner of (2–3), look up the real game row for 1.v.-winner
           const rightRow = topWinnerPlace
             ? getRowByGame(`1.v.-${topWinnerPlace}`, `${topWinnerPlace}-1.v.`)
             : null;
@@ -66,8 +67,7 @@
           // Labels always show placeholders, with team if known
           const label = pl => (placeMap[pl] ? `${pl} ${placeMap[pl]}` : pl);
         
-          // Build bracket HTML with a 3-column grid:
-          // [ left pairs ] [ connector rail (40px) ] [ right knots ]
+          // Build bracket HTML with a 3-column grid
           return `
             <div class="brkt">
               <div class="brkt-left">
@@ -90,7 +90,7 @@
                 <div class="knot">
                   <div class="slot up">${oneVLabel}</div>
                   <div class="slot dn">${topOK ? `Winner: ${topWinner}` : "Winner 2.v.-3.v."}</div>
-                  <div class="result">${rightOK ? `${rightResult}` : ""}</div>
+                  <div class="result">${rightOK ? rightResult : ""}</div>
                   <div class="winner">${rightOK ? `Winner: ${rightWinner}` : ""}</div>
                 </div>
               </div>
