@@ -160,25 +160,33 @@ body {
 .brkt-column {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
 }
 
 /* Column 1: Initial Matchups */
 .brkt-column-1 {
-  gap: 30px; /* Space between the two pairs */
+  justify-content: center;
+}
+
+.brkt-column-1 .pair {
+  margin: 10px 0;
 }
 
 /* Column 2: Semifinals */
 .brkt-column-2 {
-  gap: 10px;
-  padding-top: 30px; /* Aligns with the middle of the first column */
-  position: relative;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.brkt-column-2 .slot-top {
+  margin-bottom: 25px; /* Adjust spacing to align with the first column */
 }
 
 /* Column 3: Final Winner */
 .brkt-column-3 {
   justify-content: center;
-  padding-top: 30px;
+  align-items: center;
 }
 
 /* Slot (team box) */
@@ -198,43 +206,9 @@ body {
   margin: 5px 0;
 }
 
-/* Result bubble */
-.result-bubble {
-  position: absolute;
-  font-size: 12px;
-  background: #fff;
-  padding: 2px 6px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  white-space: nowrap;
-  text-align: center;
-  z-index: 2;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.brkt-column-1 .pair {
-  position: relative;
-}
-.brkt-column-1 .result-bubble {
-  left: 100%;
-  margin-left: 2px;
-}
-
-/* Middle result bubble */
-.result-bubble-semi {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-}
-.brkt-column-2 .result-bubble-semi {
-  left: 100%;
-  margin-left: 2px;
-}
-
 /* Final winner slot styling */
 .final-winner-slot {
   font-weight: bold;
   color: #E4312A;
-  margin-top: -10px;
 }
+
