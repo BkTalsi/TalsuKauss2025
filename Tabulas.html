@@ -56,37 +56,35 @@
         
           const label = pl => (placeMap[pl] ? `${pl} ${placeMap[pl]}` : pl);
         
-          return `
-            <div class="brkt">
-              <div class="column brkt-left">
-                <div class="pair">
+            return `
+              <div class="brkt">
+                <!-- Column 1 -->
+                <div class="column">
                   <div class="slot">${label("2.v.")}</div>
                   <div class="slot">${label("3.v.")}</div>
-                  <div class="result-bubble">${topOK ? topResult : "Result"}</div>
-                </div>
-                <div class="pair">
+                  <div class="result-bubble">${topOK ? topResult : ""}</div>
+            
                   <div class="slot">${label("4.v.")}</div>
                   <div class="slot">${label("5.v.")}</div>
-                  <div class="result-bubble">${botOK ? botResult : "Result"}</div>
+                  <div class="result-bubble">${botOK ? botResult : ""}</div>
                 </div>
-              </div>
-              <div class="column brkt-right">
-                <div class="single-slot">
+            
+                <!-- Column 2 -->
+                <div class="column">
                   <div class="slot">${label("1.v.")}</div>
-                </div>
-                <div class="single-slot">
+                  <div class="result-bubble">${finalOK ? finalResult : ""}</div>
                   <div class="slot">${topOK ? topWinner : "Winner 2.v.-3.v."}</div>
-                </div>
-                <div class="single-slot">
+            
                   <div class="slot">${botOK ? botWinner : "Winner 4.v.-5.v."}</div>
                 </div>
-                <div class="final-match">
-                  <div class="result-bubble">${finalOK ? finalResult : "Result"}</div>
+            
+                <!-- Column 3 -->
+                <div class="column">
+                  <div class="slot">${finalOK ? finalWinner : "Winner"}</div>
                   <div class="winner-text">${finalOK ? `Winner: ${finalWinner}` : ""}</div>
                 </div>
               </div>
-            </div>
-          `;
+            `;
         }
         async function fetchData() {
             try {
@@ -258,21 +256,21 @@
     </nav>
     <div class="container mt-5">
       <h2 class="text-center">2012. gadā dzimušie</h2>
-      <div class="row mt-3">
-        <div class="col-md-6">
-          <div id="2012-table"></div>
+        <div class="row mt-3">
+          <div class="col-md-8">
+            <div id="2012-table"></div>
+          </div>
+          <div class="col-md-4">
+            <div id="2012-bracket"></div>
+          </div>
         </div>
-        <div class="col-md-6">
-          <div id="2012-bracket"></div>
-        </div>
-      </div>
     
       <h2 class="text-center mt-5">2014. gadā dzimušie</h2>
       <div class="row mt-3">
-        <div class="col-md-6">
+        <div class="col-md-8">
           <div id="2014-table"></div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
           <div id="2014-bracket"></div>
         </div>
       </div>
