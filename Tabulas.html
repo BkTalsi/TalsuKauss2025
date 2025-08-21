@@ -18,80 +18,74 @@
         const teams2012 = ["JUGLA", "TALSI MIX", "KOHILA SK", "TALSI","RĪDZENE"];
         const teams2014 = ["TUKUMS", "TALSI 2013", "KOHILA SK/RAPLA KK", "TALSI", "RĪDZENE"];
         function generateBracket(teams, vietaValues, rows, group) {
-          // Rows 22–26 (knockout games) from the whole sheet
           const knockoutRows = rows
             .slice(21, 26)
             .filter(r => (r.c[3]?.v || "").trim() === (group || "").trim());
         
-          // Normalize table "Vieta" values to placeholders like "2.v."
           const toPlaceholder = v => {
             const n = String(v ?? "").match(/\d+/)?.[0];
             return n ? `${n}.v.` : "";
           };
         
-          // Map "1.v.", "2.v.", ... -> team name (if known)
           const placeMap = {};
           teams.forEach((team, idx) => {
             const key = toPlaceholder(vietaValues[idx]);
             if (key) placeMap[key] = team;
           });
         
-          // Helper: find a knockout row by GameID (col[14])
           const getRowByGame = (...ids) =>
             knockoutRows.find(r => ids.includes((r.c[14]?.v || "").trim()));
         
-          // ----- TOP PAIR: 2.v. vs 3.v. -----
+          // Top Pair: 2.v. vs 3.v.
           const topPairRow = getRowByGame("2.v.-3.v.", "3.v.-2.v.");
           const topOK = topPairRow?.c[10]?.v === "OK";
           const topResult = topOK ? (topPairRow.c[8]?.v || "") : "";
           const topWinner = topOK ? (topPairRow.c[9]?.v || "") : "";
-          const topWinnerPlace = topOK
-            ? (topWinner === placeMap["2.v."] ? "2.v." : topWinner === placeMap["3.v."] ? "3.v." : "")
-            : "";
         
-          // ----- RIGHT KNOT: 1.v. vs Winner(2–3) -----
-          const oneVLabel = placeMap["1.v."] ? `1.v. ${placeMap["1.v."]}` : "1.v.";
-          const rightRow = topWinnerPlace
-            ? getRowByGame(`1.v.-${topWinnerPlace}`, `${topWinnerPlace}-1.v.`)
-            : null;
-          const rightOK = rightRow?.c[10]?.v === "OK";
-          const rightResult = rightOK ? (rightRow.c[8]?.v || "") : "";
-          const rightWinner = rightOK ? (rightRow.c[9]?.v || "") : "";
-        
-          // ----- BOTTOM PAIR: 4.v. vs 5.v. -----
+          // Bottom Pair: 4.v. vs 5.v.
           const botPairRow = getRowByGame("4.v.-5.v.", "5.v.-4.v.");
           const botOK = botPairRow?.c[10]?.v === "OK";
           const botResult = botOK ? (botPairRow.c[8]?.v || "") : "";
           const botWinner = botOK ? (botPairRow.c[9]?.v || "") : "";
         
-          // Labels always show placeholders, with team if known
+          // Final Matchup
+          const topWinnerLabel = topOK ? `Winner ${topResult}` : `Winner 2.v.-3.v.`;
+          const botWinnerLabel = botOK ? `Winner ${botResult}` : `Winner 4.v.-5.v.`;
+          const finalRow = botOK && topOK ? getRowByGame(`${topWinner}-${botWinner}`, `${botWinner}-${topWinner}`) : null;
+          const finalOK = finalRow?.c[10]?.v === "OK";
+          const finalResult = finalOK ? finalRow.c[8]?.v || "" : "";
+          const finalWinner = finalOK ? finalRow.c[9]?.v || "" : "";
+          const finalWinnerLabel = finalOK ? `${finalWinner}` : 'Finals Winner';
+        
+          // Helper function to get team label
           const label = pl => (placeMap[pl] ? `${pl} ${placeMap[pl]}` : pl);
         
-          // Build bracket HTML with a 3-column grid
           return `
             <div class="brkt">
               <div class="brkt-left">
                 <div class="pair">
                   <div class="slot up">${label("2.v.")}</div>
                   <div class="slot dn">${label("3.v.")}</div>
-                  <div class="mini-knot">${topOK ? `${topResult} <span class="mini-win">${topWinner}</span>` : ""}</div>
                 </div>
         
                 <div class="pair">
                   <div class="slot up">${label("4.v.")}</div>
                   <div class="slot dn">${label("5.v.")}</div>
-                  <div class="mini-knot">${botOK ? `${botResult} <span class="mini-win">${botWinner}</span>` : ""}</div>
                 </div>
               </div>
-        
-              <div class="brkt-rail"></div>
+              
+              <div class="brkt-middle">
+                <div class="mini-knot">${topOK ? `${topResult}` : ""}</div>
+                <div class="rail"></div>
+                <div class="mini-knot">${botOK ? `${botResult}` : ""}</div>
+              </div>
         
               <div class="brkt-right">
-                <div class="knot">
-                  <div class="slot up">${oneVLabel}</div>
-                  <div class="slot dn">${topOK ? `Winner: ${topWinner}` : "Winner 2.v.-3.v."}</div>
-                  <div class="result">${rightOK ? rightResult : ""}</div>
-                  <div class="winner">${rightOK ? `Winner: ${rightWinner}` : ""}</div>
+                <div class="slot up">${topOK ? topWinner : "Winner 2.v.-3.v."}</div>
+                <div class="slot dn">${botOK ? botWinner : "Winner 4.v.-5.v."}</div>
+                <div class="final-knot">
+                  <div class="result">${finalOK ? finalResult : ""}</div>
+                  <div class="winner">${finalOK ? finalWinner : ""}</div>
                 </div>
               </div>
             </div>
