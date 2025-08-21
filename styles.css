@@ -157,9 +157,28 @@ body {
   padding: 10px;
 }
 
-.brkt-left, .brkt-right {
+.brkt-column {
   display: flex;
   flex-direction: column;
+  align-items: center;
+}
+
+/* Column 1: Initial Matchups */
+.brkt-column-1 {
+  gap: 30px; /* Space between the two pairs */
+}
+
+/* Column 2: Semifinals */
+.brkt-column-2 {
+  gap: 10px;
+  padding-top: 30px; /* Aligns with the middle of the first column */
+  position: relative;
+}
+
+/* Column 3: Final Winner */
+.brkt-column-3 {
+  justify-content: center;
+  padding-top: 30px;
 }
 
 /* Slot (team box) */
@@ -179,49 +198,9 @@ body {
   margin: 5px 0;
 }
 
-/* Left Column Styling */
-.brkt-left {
-  gap: 30px; /* Space between the two pairs */
-}
-
-.brkt-left .pair {
-  position: relative;
-}
-
-/* Horizontal lines from left slots to middle */
-.brkt-left .pair .slot:first-child::after,
-.brkt-left .pair .slot:last-child::after {
-  content: '';
+/* Result bubble */
+.result-bubble {
   position: absolute;
-  right: -25px;
-  width: 25px;
-  height: 2px;
-  background: #c9c9c9;
-  z-index: 1;
-}
-
-.brkt-left .pair .slot:first-child::after { top: 50%; }
-.brkt-left .pair .slot:last-child::after { bottom: 50%; }
-
-/* Vertical line connecting the two horizontal lines */
-.brkt-left .pair::before {
-  content: '';
-  position: absolute;
-  right: -25px;
-  top: 50%;
-  width: 2px;
-  height: calc(100% - 20px);
-  background: #c9c9c9;
-  transform: translateY(-50%);
-  z-index: 0;
-}
-
-/* Result bubble on left side */
-.brkt-left .pair .result-bubble {
-  position: absolute;
-  right: -40px;
-  top: 50%;
-  transform: translateY(-50%);
   font-size: 12px;
   background: #fff;
   padding: 2px 6px;
@@ -230,94 +209,32 @@ body {
   white-space: nowrap;
   text-align: center;
   z-index: 2;
-}
-
-/* Right Column Styling */
-.brkt-right {
-  gap: 30px;
-}
-
-.brkt-right .pair {
-  position: relative;
-}
-
-/* Vertical line connecting 1.v. and Winner 2.v.-3.v. */
-.brkt-right .pair::before {
-  content: '';
-  position: absolute;
-  left: -25px;
-  top: 50%;
-  width: 2px;
-  height: calc(100% - 20px);
-  background: #c9c9c9;
-  transform: translateY(-50%);
-  z-index: 0;
-}
-
-/* Horizontal lines from right slots to vertical line */
-.brkt-right .pair .slot:first-child::before,
-.brkt-right .pair .slot:last-child::before,
-.brkt-right .single-slot .slot::before {
-  content: '';
-  position: absolute;
-  left: -25px;
-  width: 25px;
-  height: 2px;
-  background: #c9c9c9;
-  z-index: 1;
-}
-.brkt-right .pair .slot:first-child::before { top: 50%; }
-.brkt-right .pair .slot:last-child::before { bottom: 50%; }
-.brkt-right .single-slot .slot::before { top: 50%; }
-
-/* Final result bubble and winner box */
-.brkt-right .final-match {
-  position: relative;
-}
-
-.brkt-right .result-bubble {
-  position: absolute;
-  left: -40px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 12px;
-  background: #fff;
-  padding: 2px 6px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  white-space: nowrap;
-  text-align: center;
-  z-index: 2;
 }
 
-.brkt-right .final-winner {
-  position: absolute;
+.brkt-column-1 .pair {
+  position: relative;
+}
+.brkt-column-1 .result-bubble {
   left: 100%;
-  top: 50%;
-  transform: translateY(-50%) translateX(25px);
+  margin-left: 2px;
 }
 
-.brkt-right .winner-box {
-  background: #f8f9fa;
-  border: 2px solid #027669;
-  border-radius: 8px;
-  padding: 4px 8px;
-  min-width: 140px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 13px;
-  color: #E4312A;
-  position: relative;
-}
-
-.brkt-right .winner-box::before {
-  content: '';
+/* Middle result bubble */
+.result-bubble-semi {
   position: absolute;
-  left: -25px;
-  width: 25px;
-  height: 2px;
-  background: #c9c9c9;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.brkt-column-2 .result-bubble-semi {
+  left: 100%;
+  margin-left: 2px;
+}
+
+/* Final winner slot styling */
+.final-winner-slot {
+  font-weight: bold;
+  color: #E4312A;
+  margin-top: -10px;
 }
