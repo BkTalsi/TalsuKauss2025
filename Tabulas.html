@@ -19,9 +19,7 @@
         const teams2014 = ["TUKUMS", "TALSI 2013", "KOHILA SK/RAPLA KK", "TALSI", "RĪDZENE"];
         function generateBracket(teams, vietaValues, rows, group) {
           // Rows 22–27 from the whole sheet, then keep the ones for this group
-          const knockoutRows = rows
-            .slice(21, 26)
-            .filter(r => (r.c[3]?.v || "").trim() === (group || "").trim());
+          const knockoutRows = rows.slice(21, 26).filter(r => (r.c[3]?.v || "").trim() === (group || "").trim());
         
           // Normalize table "Vieta" values to placeholders like "2.v."
           const toPlaceholder = v => {
@@ -37,8 +35,7 @@
           });
         
           // Helper: find a knockout row by GameID (col[14]) — try both orders
-          const getRowByGame = (...ids) =>
-            knockoutRows.find(r => ids.includes((r.c[14]?.v || "").trim()));
+          const getRowByGame = (...ids) => knockoutRows.find(r => ids.includes((r.c[14]?.v || "").trim()));
         
           // ----- TOP PAIR: 2.v. vs 3.v. -----
           const topPairRow = getRowByGame("2.v.-3.v.", "3.v.-2.v.");
@@ -47,9 +44,7 @@
           const topWinner = topOK ? (topPairRow.c[9]?.v || "") : "";
           // Determine which placeholder the winner belongs to (2.v. or 3.v.)
           const topWinnerPlace = topOK
-            ? (topWinner === placeMap["2.v."] ? "2.v."
-              : topWinner === placeMap["3.v."] ? "3.v."
-              : "")
+            ? (topWinner === placeMap["2.v."] ? "2.v." : topWinner === placeMap["3.v."] ? "3.v." : "")
             : "";
         
           // ----- RIGHT KNOT: 1.v. vs Winner(2–3) -----
@@ -76,14 +71,12 @@
           return `
             <div class="brkt">
               <div class="brkt-left">
-                <!-- 2.v. vs 3.v. -->
                 <div class="pair">
                   <div class="slot up">${label("2.v.")}</div>
                   <div class="slot dn">${label("3.v.")}</div>
                   <div class="mini-knot">${topOK ? `${topResult} <span class="mini-win">${topWinner}</span>` : ""}</div>
                 </div>
         
-                <!-- 4.v. vs 5.v. -->
                 <div class="pair">
                   <div class="slot up">${label("4.v.")}</div>
                   <div class="slot dn">${label("5.v.")}</div>
@@ -94,61 +87,16 @@
               <div class="brkt-rail"></div>
         
               <div class="brkt-right">
-                <!-- 1.v. vs Winner(2–3) -->
                 <div class="knot">
                   <div class="slot up">${oneVLabel}</div>
                   <div class="slot dn">${topOK ? `Winner: ${topWinner}` : "Winner 2.v.-3.v."}</div>
-                  <div class="result">${rightOK ? rightResult : ""}</div>
+                  <div class="result">${rightOK ? `${rightResult}` : ""}</div>
                   <div class="winner">${rightOK ? `Winner: ${rightWinner}` : ""}</div>
                 </div>
               </div>
             </div>
           `;
         }
-
-        // function generateBracket(teams, vietaValues, rows,group) {
-        //     //const groupRows = rows.filter(r => r.c[3]?.v == group);
-        //     // Limit to rows 22–27 (knockout games)
-        //     //const knockoutRows = groupRows.slice(21, 27); 
-        //     const knockoutRows = rows.slice(20, 26).filter(r => r.c[3]?.v == group);
-        
-        //     // Map places (Vieta -> team name)
-        //     const placeMap = {};
-        //     teams.forEach((team, idx) => {
-        //         const vieta = vietaValues[idx];
-        //         if (vieta) {
-        //             placeMap[vieta] = team;
-        //         }
-        //     });
-        
-        //     let bracketHTML = `<div class="bracket">`;
-        
-        //     knockoutRows.forEach(row => {
-        //         const status = row.c[10]?.v;
-        //         const result = row.c[8]?.v || "";
-        //         const winner = row.c[9]?.v || "";
-        //         const gameID = row.c[14]?.v;
-        
-        //         // GameID like "2.v.-4.v." → split to get placeholders
-        //         if (gameID) {
-        //             const [top, bottom] = gameID.split("-");
-        //             const topTeam = placeMap[top] ? `${top} ${placeMap[top]}` : top;
-        //             const bottomTeam = placeMap[bottom] ? `${bottom} ${placeMap[bottom]}` : bottom;
-        
-        //             bracketHTML += `
-        //               <div class="match">
-        //                 <div class="slot">${topTeam}</div>
-        //                 <div class="slot">${bottomTeam}</div>
-        //                 <div class="result">${status === "OK" ? result : ""}</div>
-        //                 <div class="winner">${status === "OK" ? "Winner: " + winner : ""}</div>
-        //               </div>
-        //             `;
-        //         }
-        //     });
-        
-        //     bracketHTML += `</div>`;
-        //     return bracketHTML;
-        // }
         async function fetchData() {
             try {
                 const response = await fetch(apiURL);
