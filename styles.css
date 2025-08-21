@@ -168,8 +168,12 @@ body {
   justify-content: center;
 }
 
-.brkt-column-1 .pair {
-  margin: 10px 0;
+/* Result bubble */
+.brkt-column-1 .pair, .brkt-column-2 .pair-semifinal {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  gap: 5px;
 }
 
 /* Column 2: Semifinals */
@@ -179,7 +183,7 @@ body {
   gap: 20px;
 }
 
-.brkt-column-2 .slot-top {
+.brkt-column-2 .pair-semifinal {
   margin-bottom: 25px; /* Adjust spacing to align with the first column */
 }
 
