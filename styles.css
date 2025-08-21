@@ -151,23 +151,20 @@ body {
 /* New Bracket Layout */
 .brkt {
   display: grid;
-  grid-template-columns: minmax(200px, 1fr) 50px minmax(200px, 1fr);
-  column-gap: 24px;
-  align-items: center;
-  margin-top: 12px;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 50px;
+  align-items: start;
   position: relative;
+  padding: 20px;
 }
 
-.brkt-left,
-.brkt-right,
-.brkt-middle {
+.brkt .column {
   display: flex;
   flex-direction: column;
-  gap: 28px;
-  position: relative;
+  gap: 40px;
 }
 
-/* Slot Styles (the boxes) */
+/* Base style for all slots (team boxes) */
 .brkt .slot {
   background: #f8f9fa;
   border: 2px solid #027669;
@@ -183,36 +180,45 @@ body {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-/* Left Column: two stacked pairs */
-.pair {
-  --slot-h: 44px;
-  --gap: 12px;
+/* Left Column Styling */
+.brkt-left .pair {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--gap);
 }
 
-/* Lines from left slots to middle rail */
-.pair .slot.up::after,
-.pair .slot.dn::after {
-  content: "";
+/* Horizontal lines from left slots */
+.brkt-left .pair .slot:first-child::after,
+.brkt-left .pair .slot:last-child::after {
+  content: '';
   position: absolute;
-  right: -24px;
-  top: 50%;
-  width: 24px;
+  right: -25px;
+  width: 25px;
   height: 2px;
   background: #c9c9c9;
   transform: translateY(-50%);
 }
+.brkt-left .pair .slot:first-child::after { top: calc(50% - 10px); }
+.brkt-left .pair .slot:last-child::after { top: calc(50% + 10px); }
 
-/* Bracket middle column - the main rail */
-.brkt-middle {
-  align-items: center;
-  gap: 28px;
+/* Vertical line connecting the two horizontals on the left */
+.brkt-left .pair::before {
+  content: '';
+  position: absolute;
+  right: -25px;
+  top: 50%;
+  width: 2px;
+  height: calc(100% + 20px);
+  background: #c9c9c9;
+  transform: translateY(-50%);
 }
 
-.brkt-middle .mini-knot {
+/* Result bubble on left side */
+.brkt-left .pair .result-bubble {
+  position: absolute;
+  right: -25px;
+  top: 50%;
+  transform: translate(calc(50% + 10px), -50%);
   font-size: 12px;
   background: #fff;
   padding: 2px 6px;
@@ -221,48 +227,59 @@ body {
   white-space: nowrap;
 }
 
-.brkt-middle .rail {
-  width: 2px;
-  height: 100px; /* Adjust height as needed */
-  background: #c9c9c9;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-}
-
-/* Right Column: the final winner */
+/* Right Column Styling */
 .brkt-right {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  align-items: center;
-  justify-content: center;
+  gap: 15px;
   position: relative;
+  padding-top: 15px; /* Adjust as needed for alignment */
 }
 
-/* Lines from middle rail to right slots */
-.brkt-right .slot.up::before,
-.brkt-right .slot.dn::before {
-  content: "";
+/* Connecting line for 1.v vs Winner(2-3) */
+.brkt-right .single-slot:nth-child(1) .slot::after,
+.brkt-right .single-slot:nth-child(2) .slot::after {
+  content: '';
   position: absolute;
-  left: -24px;
-  top: 50%;
-  width: 24px;
+  right: -25px;
+  width: 25px;
   height: 2px;
   background: #c9c9c9;
   transform: translateY(-50%);
 }
+.brkt-right .single-slot:nth-child(1) .slot::after { top: 50%; }
+.brkt-right .single-slot:nth-child(2) .slot::after { top: 50%; }
 
-.brkt-right .final-knot {
-  font-size: 13px;
-  margin-top: 24px;
-  text-align: center;
+/* Vertical line connecting 1.v and Winner(2-3) */
+.brkt-right::before {
+  content: '';
+  position: absolute;
+  left: calc(180px + 2px + 25px); /* min-width + border + line */
+  top: 15px; /* Matches padding-top */
+  width: 2px;
+  height: calc(44px * 2 + 15px); /* height of two slots + gap */
+  background: #c9c9c9;
 }
-.brkt-right .result {
-  color: #333;
+
+/* Final result bubble on right side */
+.brkt-right .final-match {
+  position: absolute;
+  left: calc(180px + 2px + 25px);
+  top: calc(44px + 15px + 15px); /* Position between the two slots */
+  transform: translate(calc(50% + 10px), -50%);
 }
-.brkt-right .winner {
-  font-weight: 700;
-  color: #e4312a;
+
+.brkt-right .final-match .result-bubble {
+  font-size: 12px;
+  background: #fff;
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid #e5e5e5;
+  white-space: nowrap;
+}
+
+.brkt-right .winner-text {
+  font-weight: bold;
+  color: #E4312A;
+  margin-top: 5px;
 }
