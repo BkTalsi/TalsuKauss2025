@@ -344,7 +344,7 @@ body {
   margin-left: 2px;
 }
 
-/* Mobile tweaks */
+/* Mobile tweaks 2*/
 @media (max-width: 768px) {
   .brkt {
     grid-template-columns: 1fr;   /* stack on small screens */
