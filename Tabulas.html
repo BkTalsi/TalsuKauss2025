@@ -36,56 +36,53 @@
           const getRowByGame = (...ids) =>
             knockoutRows.find(r => ids.includes((r.c[14]?.v || "").trim()));
         
-          // Top Pair: 2.v. vs 3.v.
+          // ---- Game 1: 2.v vs 3.v ----
           const topPairRow = getRowByGame("2.v.-3.v.", "3.v.-2.v.");
           const topOK = topPairRow?.c[10]?.v === "OK";
           const topResult = topOK ? (topPairRow.c[8]?.v || "") : "";
           const topWinner = topOK ? (topPairRow.c[9]?.v || "") : "";
         
-          // Bottom Pair: 4.v. vs 5.v.
+          // ---- Game 2: 4.v vs 5.v ----
           const botPairRow = getRowByGame("4.v.-5.v.", "5.v.-4.v.");
           const botOK = botPairRow?.c[10]?.v === "OK";
           const botResult = botOK ? (botPairRow.c[8]?.v || "") : "";
           const botWinner = botOK ? (botPairRow.c[9]?.v || "") : "";
         
-          // Final Matchup
-          const topWinnerLabel = topOK ? `Winner ${topResult}` : `Winner 2.v.-3.v.`;
-          const botWinnerLabel = botOK ? `Winner ${botResult}` : `Winner 4.v.-5.v.`;
-          const finalRow = botOK && topOK ? getRowByGame(`${topWinner}-${botWinner}`, `${botWinner}-${topWinner}`) : null;
+          // ---- Game 3: 1.v vs Winner(2.v-3.v) ----
+          const finalRow = topOK ? getRowByGame(`1.v.-${topWinner}`, `${topWinner}-1.v.`) : null;
           const finalOK = finalRow?.c[10]?.v === "OK";
           const finalResult = finalOK ? finalRow.c[8]?.v || "" : "";
           const finalWinner = finalOK ? finalRow.c[9]?.v || "" : "";
-          const finalWinnerLabel = finalOK ? `${finalWinner}` : 'Finals Winner';
         
-          // Helper function to get team label
           const label = pl => (placeMap[pl] ? `${pl} ${placeMap[pl]}` : pl);
         
           return `
             <div class="brkt">
-              <div class="brkt-left">
+              <div class="column brkt-left">
                 <div class="pair">
-                  <div class="slot up">${label("2.v.")}</div>
-                  <div class="slot dn">${label("3.v.")}</div>
+                  <div class="slot">${label("2.v.")}</div>
+                  <div class="slot">${label("3.v.")}</div>
+                  <div class="result-bubble">${topOK ? topResult : "Result"}</div>
                 </div>
-        
                 <div class="pair">
-                  <div class="slot up">${label("4.v.")}</div>
-                  <div class="slot dn">${label("5.v.")}</div>
+                  <div class="slot">${label("4.v.")}</div>
+                  <div class="slot">${label("5.v.")}</div>
+                  <div class="result-bubble">${botOK ? botResult : "Result"}</div>
                 </div>
               </div>
-              
-              <div class="brkt-middle">
-                <div class="mini-knot">${topOK ? `${topResult}` : ""}</div>
-                <div class="rail"></div>
-                <div class="mini-knot">${botOK ? `${botResult}` : ""}</div>
-              </div>
-        
-              <div class="brkt-right">
-                <div class="slot up">${topOK ? topWinner : "Winner 2.v.-3.v."}</div>
-                <div class="slot dn">${botOK ? botWinner : "Winner 4.v.-5.v."}</div>
-                <div class="final-knot">
-                  <div class="result">${finalOK ? finalResult : ""}</div>
-                  <div class="winner">${finalOK ? finalWinner : ""}</div>
+              <div class="column brkt-right">
+                <div class="single-slot">
+                  <div class="slot">${label("1.v.")}</div>
+                </div>
+                <div class="single-slot">
+                  <div class="slot">${topOK ? topWinner : "Winner 2.v.-3.v."}</div>
+                </div>
+                <div class="single-slot">
+                  <div class="slot">${botOK ? botWinner : "Winner 4.v.-5.v."}</div>
+                </div>
+                <div class="final-match">
+                  <div class="result-bubble">${finalOK ? finalResult : "Result"}</div>
+                  <div class="winner-text">${finalOK ? `Winner: ${finalWinner}` : ""}</div>
                 </div>
               </div>
             </div>
@@ -246,7 +243,6 @@
 <body class="bg-light">
         <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
     <div class="container">
-        <img src="https://raw.githubusercontent.com/BkTalsi/TalsuKauss2025/main/citro.jpg" alt="Logo" class="navbar-logo" style="height: 40px; margin-right: 1px;">
         <img src="https://raw.githubusercontent.com/BkTalsi/TalsuKauss2025/main/talsu%20novads2.jpg" alt="Logo" class="navbar-logo" style="height: 40px; margin-right: 1px;">
         <a class="navbar-brand" href="index.html">Talsu kauss 2025</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -256,8 +252,6 @@
             <ul class="navbar-nav">
                 <li class="nav-item"><a class="nav-link" href="index.html">Grafiks</a></li>
                 <li class="nav-item"><a class="nav-link" href="Tabulas.html">Tabulas</a></li>
-                <li class="nav-item"><a class="nav-link" href="FreeShotsK.html">Metieni 2012.g.dz</a></li>
-                <li class="nav-item"><a class="nav-link" href="FreeShotsD.html">Metieni 2014.g.dz</a></li>
                 <li class="nav-item"><a class="nav-link" href="Maps.html">Adreses</a></li>
             </ul>
         </div>
