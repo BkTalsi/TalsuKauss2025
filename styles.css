@@ -226,3 +226,136 @@ body {
         padding: 4px 6px;
     }
 }
+/* ===== Bracket (2v–3v -> 1v) ===== */
+.brkt {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) 40px minmax(260px, 1fr);
+  column-gap: 24px;
+  align-items: start;
+  margin-top: 12px;
+}
+
+.brkt-left,
+.brkt-right {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  position: relative;
+}
+
+/* ---- Slots / boxes ---- */
+.brkt .slot {
+  background: #f8f9fa;
+  border: 2px solid #027669;
+  border-radius: 8px;
+  padding: 6px 10px;
+  min-width: 180px;
+  height: 44px;                /* fixed height to make connectors precise */
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 14px;
+  position: relative;
+  box-shadow: 0 1px 2px rgba(0,0,0,.05);
+}
+
+/* ---- Left column: two stacked matches with a vertical join + horizontal arms ---- */
+.pair {
+  --slot-h: 44px;
+  --gap: 12px;
+  position: relative;
+  padding-right: 40px;         /* space for the horizontal arms into the rail */
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+/* Horizontal arms from each slot into the middle rail */
+.pair .slot.up::after,
+.pair .slot.dn::after {
+  content: "";
+  position: absolute;
+  right: -40px;                /* reach into the 40px rail column */
+  top: calc(var(--slot-h)/2 - 1px);
+  width: 40px;
+  height: 2px;
+  background: #c9c9c9;
+}
+
+/* Vertical join connecting the two horizontals */
+.pair::after {
+  content: "";
+  position: absolute;
+  right: -40px;
+  top: calc(var(--slot-h)/2);
+  width: 2px;
+  height: calc(var(--slot-h) + var(--gap));
+  background: #c9c9c9;
+}
+
+/* Result bubble at the join */
+.mini-knot {
+  position: absolute;
+  right: -40px;
+  top: calc(var(--slot-h) + var(--gap)/2);
+  transform: translate(8px, -50%);
+  font-size: 12px;
+  background: #fff;
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid #e5e5e5;
+  white-space: nowrap;
+}
+.mini-knot .mini-win {
+  font-weight: 700;
+  margin-left: 6px;
+  color: #E4312A;
+}
+
+/* ---- Right column: the 1.v. vs Winner(2–3) knot ---- */
+.knot {
+  position: relative;
+  padding-left: 40px;          /* room for incoming horizontal line from rail */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Incoming line from rail into the knot center */
+.knot::before {
+  content: "";
+  position: absolute;
+  left: -40px;
+  top: calc((44px + 8px) / 2); /* approx. halfway between its two slots */
+  width: 40px;
+  height: 2px;
+  background: #c9c9c9;
+}
+
+/* Texts under the knot */
+.knot .result {
+  font-size: 13px;
+  margin-left: 2px;
+}
+.knot .winner {
+  font-size: 13px;
+  font-weight: 700;
+  color: #E4312A;
+  margin-left: 2px;
+}
+
+/* Mobile tweaks */
+@media (max-width: 768px) {
+  .brkt {
+    grid-template-columns: 1fr;   /* stack on small screens */
+    row-gap: 18px;
+  }
+  .pair { padding-right: 24px; }
+  .pair .slot.up::after,
+  .pair .slot.dn::after { right: -24px; width: 24px; }
+  .pair::after { right: -24px; }
+  .mini-knot { right: -24px; }
+  .knot { padding-left: 24px; }
+  .knot::before { left: -24px; width: 24px; }
+}
+
