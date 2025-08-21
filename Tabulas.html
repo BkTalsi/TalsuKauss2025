@@ -192,8 +192,8 @@
                 const tableHTML2012 = generateTable(teams2012, results2012, teamPoints2012, vietaValues2012);
                 const tableHTML2014 = generateTable(teams2014, results2014, teamPoints2014, vietaValues2014);
                 // Generate bracket HTML
-                const bracketHTML2012 = generateBracket(teams2012, vietaValues2012, rows, , "2012. g");
-                const bracketHTML2014 = generateBracket(teams2014, vietaValues2014, rows, , "2014. g");
+                const bracketHTML2012 = generateBracket(teams2012, vietaValues2012, rows, "2012. g");
+                const bracketHTML2014 = generateBracket(teams2014, vietaValues2014, rows, "2014. g");
 
                 // Display the tables
                 document.getElementById("2012-table").innerHTML = tableHTML2012;
