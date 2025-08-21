@@ -159,73 +159,7 @@ body {
                 grid-template-columns: 1fr; /* 1 column on small screens */
             }
         }
-/* ----- Bracket Layout ----- */
-.bracket {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 30px; /* space between matches */
-    margin-top: 20px;
-    padding-left: 30px;
-    border-left: 3px solid #ccc; /* vertical spine */
-}
 
-.match {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    position: relative;
-    padding-left: 40px; /* space for horizontal branch line */
-}
-
-.slot {
-    background: #f8f9fa;
-    border: 2px solid #027669;
-    border-radius: 5px;
-    padding: 5px 10px;
-    margin: 3px 0;
-    font-size: 14px;
-    min-width: 120px;
-    text-align: left;
-    font-weight: bold;
-    position: relative;
-}
-
-.slot::before {
-    content: "";
-    position: absolute;
-    left: -40px;
-    top: 50%;
-    width: 40px;
-    height: 2px;
-    background: #ccc; /* horizontal connector line */
-}
-
-.result {
-    font-size: 14px;
-    color: #333;
-    margin: 4px 0 0 5px;
-}
-
-.winner {
-    font-size: 14px;
-    color: #E4312A;
-    font-weight: bold;
-    margin-top: 2px;
-    margin-left: 5px;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .bracket {
-        padding-left: 10px;
-    }
-    .slot {
-        font-size: 12px;
-        min-width: 90px;
-        padding: 4px 6px;
-    }
-}
 /* New Bracket Layout */
 .brkt {
   display: grid;
