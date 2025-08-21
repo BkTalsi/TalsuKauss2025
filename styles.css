@@ -180,11 +180,11 @@ body {
 .brkt-column-2 {
   justify-content: center;
   align-items: center;
-  gap: 20px;
+  gap: 0px;
 }
 
 .brkt-column-2 .pair-semifinal {
-  margin-bottom: 25px; /* Adjust spacing to align with the first column */
+  margin-bottom: 50px; /* Adjust spacing to align with the first column */
 }
 
 /* Column 3: Final Winner */
