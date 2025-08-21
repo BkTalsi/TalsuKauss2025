@@ -61,22 +61,21 @@ function generateBracket(teams, vietaValues, rows, group) {
   return `
     <div class="brkt">
       <div class="brkt-column brkt-column-1">
-        <div class="pair">
+        <div class="single-slot slot-top">${label("1.v.")}</div>
+        <div class="pair pair-top">
           <div class="slot">${label("2.v.")}</div>
           <div class="slot">${label("3.v.")}</div>
-          <div class="result-bubble">${topOK ? topResult : ""}</div>
         </div>
-        <div class="pair">
+        <div class="pair pair-bottom">
           <div class="slot">${label("4.v.")}</div>
           <div class="slot">${label("5.v.")}</div>
-          <div class="result-bubble">${botOK ? botResult : ""}</div>
         </div>
       </div>
       <div class="brkt-column brkt-column-2">
-        <div class="slot">${label("1.v.")}</div>
-        <div class="slot">${topOK ? winnerLabel(topWinner) : "Winner 2.v.-3.v."}</div>
-        <div class="result-bubble result-bubble-semi">${finalOK ? finalResult : ""}</div>
-        <div class="slot">${botOK ? winnerLabel(botWinner) : "Winner 4.v.-5.v."}</div>
+        <div class="semi-slots">
+          <div class="slot">${topOK ? winnerLabel(topWinner) : "Winner 2.v.-3.v."}</div>
+          <div class="slot">${botOK ? winnerLabel(botWinner) : "Winner 4.v.-5.v."}</div>
+        </div>
       </div>
       <div class="brkt-column brkt-column-3">
         <div class="slot final-winner-slot">${finalWinnerLabel}</div>
