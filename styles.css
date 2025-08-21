@@ -148,138 +148,67 @@ body {
         grid-template-columns: 1fr; /* 1 column on small screens */
     }
 }
-/* New Bracket Layout */
+/* Bracket layout: 3 columns */
 .brkt {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  column-gap: 50px;
-  align-items: start;
-  position: relative;
-  padding: 20px;
+  grid-template-columns: 1fr 1fr 1fr; /* 3 equal columns */
+  gap: 40px;
+  padding: 10px;
 }
 
+/* Column stacks */
 .brkt .column {
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  align-items: center;
+  gap: 25px;
 }
 
-/* Base style for all slots (team boxes) */
+/* Slot (team box) */
 .brkt .slot {
   background: #f8f9fa;
   border: 2px solid #027669;
   border-radius: 8px;
-  padding: 6px 10px;
-  min-width: 180px;
-  height: 44px;
+  padding: 4px 8px;
+  min-width: 140px;
+  height: 40px;
   display: flex;
   align-items: center;
-  font-weight: 700;
-  font-size: 14px;
-  position: relative;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  justify-content: center;
+  font-weight: 600;
+  font-size: 13px;
 }
 
-/* Left Column Styling */
-.brkt-left .pair {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Horizontal lines from left slots */
-.brkt-left .pair .slot:first-child::after,
-.brkt-left .pair .slot:last-child::after {
-  content: '';
-  position: absolute;
-  right: -25px;
-  width: 25px;
-  height: 2px;
-  background: #c9c9c9;
-  transform: translateY(-50%);
-}
-.brkt-left .pair .slot:first-child::after { top: calc(50% - 10px); }
-.brkt-left .pair .slot:last-child::after { top: calc(50% + 10px); }
-
-/* Vertical line connecting the two horizontals on the left */
-.brkt-left .pair::before {
-  content: '';
-  position: absolute;
-  right: -25px;
-  top: 50%;
-  width: 2px;
-  height: calc(100% + 20px);
-  background: #c9c9c9;
-  transform: translateY(-50%);
-}
-
-/* Result bubble on left side */
-.brkt-left .pair .result-bubble {
-  position: absolute;
-  right: -25px;
-  top: 50%;
-  transform: translate(calc(50% + 10px), -50%);
+/* Result bubble */
+.result-bubble {
   font-size: 12px;
   background: #fff;
   padding: 2px 6px;
   border-radius: 6px;
-  border: 1px solid #e5e5e5;
+  border: 1px solid #ccc;
   white-space: nowrap;
+  text-align: center;
 }
 
-/* Right Column Styling */
-.brkt-right {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  position: relative;
-  padding-top: 15px; /* Adjust as needed for alignment */
-}
-
-/* Connecting line for 1.v vs Winner(2-3) */
-.brkt-right .single-slot:nth-child(1) .slot::after,
-.brkt-right .single-slot:nth-child(2) .slot::after {
-  content: '';
-  position: absolute;
-  right: -25px;
-  width: 25px;
-  height: 2px;
-  background: #c9c9c9;
-  transform: translateY(-50%);
-}
-.brkt-right .single-slot:nth-child(1) .slot::after { top: 50%; }
-.brkt-right .single-slot:nth-child(2) .slot::after { top: 50%; }
-
-/* Vertical line connecting 1.v and Winner(2-3) */
-.brkt-right::before {
-  content: '';
-  position: absolute;
-  left: calc(180px + 2px + 25px); /* min-width + border + line */
-  top: 15px; /* Matches padding-top */
-  width: 2px;
-  height: calc(44px * 2 + 15px); /* height of two slots + gap */
-  background: #c9c9c9;
-}
-
-/* Final result bubble on right side */
-.brkt-right .final-match {
-  position: absolute;
-  left: calc(180px + 2px + 25px);
-  top: calc(44px + 15px + 15px); /* Position between the two slots */
-  transform: translate(calc(50% + 10px), -50%);
-}
-
-.brkt-right .final-match .result-bubble {
-  font-size: 12px;
-  background: #fff;
-  padding: 2px 6px;
-  border-radius: 6px;
-  border: 1px solid #e5e5e5;
-  white-space: nowrap;
-}
-
-.brkt-right .winner-text {
+/* Winner highlight */
+.winner-text {
   font-weight: bold;
   color: #E4312A;
   margin-top: 5px;
+  font-size: 14px;
+}
+
+/* Adjust table vs bracket width */
+.row .col-md-8 {
+  flex: 0 0 65%;
+  max-width: 65%;
+}
+.row .col-md-4 {
+  flex: 0 0 35%;
+  max-width: 35%;
+}
+
+/* Smaller font inside table if needed */
+.table th, .table td {
+  font-size: 12px;
 }
