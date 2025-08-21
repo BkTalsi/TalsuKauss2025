@@ -71,11 +71,12 @@ function generateBracket(teams, vietaValues, rows, group) {
         </div>
       </div>
       <div class="brkt-column brkt-column-2">
-        <div class="single-slot slot-top">${label("1.v.")}</div>
-        <div class="semi-slots">
+        <div class="pair pair-semifinal">
+          <div class="slot">${label("1.v.")}</div>
+          <div class="result-bubble">${finalOK ? finalResult : ""}</div>
           <div class="slot">${topOK ? winnerLabel(topWinner) : "Winner 2.v.-3.v."}</div>
         </div>
-        <div class="semi-slots">
+        <div class="single-slot">
           <div class="slot">${botOK ? winnerLabel(botWinner) : "Winner 4.v.-5.v."}</div>
         </div>
       </div>
