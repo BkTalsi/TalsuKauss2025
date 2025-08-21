@@ -17,75 +17,73 @@
 
         const teams2012 = ["JUGLA", "TALSI MIX", "KOHILA SK", "TALSI","RĪDZENE"];
         const teams2014 = ["TUKUMS", "TALSI 2013", "KOHILA SK/RAPLA KK", "TALSI", "RĪDZENE"];
-        function generateBracket(teams, vietaValues, rows, group) {
-          const knockoutRows = rows
-            .slice(21, 26)
-            .filter(r => (r.c[3]?.v || "").trim() === (group || "").trim());
-        
-          const toPlaceholder = v => {
-            const n = String(v ?? "").match(/\d+/)?.[0];
-            return n ? `${n}.v.` : "";
-          };
-        
-          const placeMap = {};
-          teams.forEach((team, idx) => {
-            const key = toPlaceholder(vietaValues[idx]);
-            if (key) placeMap[key] = team;
-          });
-        
-          const getRowByGame = (...ids) =>
-            knockoutRows.find(r => ids.includes((r.c[14]?.v || "").trim()));
-        
-          // ---- Game 1: 2.v vs 3.v ----
-          const topPairRow = getRowByGame("2.v.-3.v.", "3.v.-2.v.");
-          const topOK = topPairRow?.c[10]?.v === "OK";
-          const topResult = topOK ? (topPairRow.c[8]?.v || "") : "";
-          const topWinner = topOK ? (topPairRow.c[9]?.v || "") : "";
-        
-          // ---- Game 2: 4.v vs 5.v ----
-          const botPairRow = getRowByGame("4.v.-5.v.", "5.v.-4.v.");
-          const botOK = botPairRow?.c[10]?.v === "OK";
-          const botResult = botOK ? (botPairRow.c[8]?.v || "") : "";
-          const botWinner = botOK ? (botPairRow.c[9]?.v || "") : "";
-        
-          // ---- Game 3: 1.v vs Winner(2.v-3.v) ----
-          const finalRow = topOK ? getRowByGame(`1.v.-${topWinner}`, `${topWinner}-1.v.`) : null;
-          const finalOK = finalRow?.c[10]?.v === "OK";
-          const finalResult = finalOK ? finalRow.c[8]?.v || "" : "";
-          const finalWinner = finalOK ? finalRow.c[9]?.v || "" : "";
-        
-          const label = pl => (placeMap[pl] ? `${pl} ${placeMap[pl]}` : pl);
-        
-          return `
-            <div class="brkt">
-              <div class="brkt-left">
-                <div class="pair">
-                  <div class="slot">${label("2.v.")}</div>
-                  <div class="slot">${label("3.v.")}</div>
-                  <div class="result-bubble">${topOK ? topResult : ""}</div>
-                </div>
-                <div class="pair">
-                  <div class="slot">${label("4.v.")}</div>
-                  <div class="slot">${label("5.v.")}</div>
-                  <div class="result-bubble">${botOK ? botResult : ""}</div>
-                </div>
-              </div>
-              <div class="brkt-right">
-                <div class="pair final-pair">
-                  <div class="slot">${label("1.v.")}</div>
-                  <div class="slot">${topOK ? `Winner ${topResult}` : "Winner 2.v.-3.v."}</div>
-                  <div class="result-bubble">${finalOK ? finalResult : ""}</div>
-                </div>
-                <div class="single-slot">
-                  <div class="slot">${botOK ? `Winner ${botResult}` : "Winner 4.v.-5.v."}</div>
-                </div>
-                <div class="final-winner">
-                  <div class="winner-box">${finalOK ? finalWinner : "Winner"}</div>
-                </div>
-              </div>
-            </div>
-          `;
-        }
+function generateBracket(teams, vietaValues, rows, group) {
+  const knockoutRows = rows
+    .slice(21, 26)
+    .filter(r => (r.c[3]?.v || "").trim() === (group || "").trim());
+
+  const toPlaceholder = v => {
+    const n = String(v ?? "").match(/\d+/)?.[0];
+    return n ? `${n}.v.` : "";
+  };
+
+  const placeMap = {};
+  teams.forEach((team, idx) => {
+    const key = toPlaceholder(vietaValues[idx]);
+    if (key) placeMap[key] = team;
+  });
+
+  const getRowByGame = (...ids) =>
+    knockoutRows.find(r => ids.includes((r.c[14]?.v || "").trim()));
+
+  // ---- Game 1: 2.v vs 3.v ----
+  const topPairRow = getRowByGame("2.v.-3.v.", "3.v.-2.v.");
+  const topOK = topPairRow?.c[10]?.v === "OK";
+  const topResult = topOK ? (topPairRow.c[8]?.v || "") : "";
+  const topWinner = topOK ? (topPairRow.c[9]?.v || "") : "";
+
+  // ---- Game 2: 4.v vs 5.v ----
+  const botPairRow = getRowByGame("4.v.-5.v.", "5.v.-4.v.");
+  const botOK = botPairRow?.c[10]?.v === "OK";
+  const botResult = botOK ? (botPairRow.c[8]?.v || "") : "";
+  const botWinner = botOK ? (botPairRow.c[9]?.v || "") : "";
+
+  // ---- Game 3: 1.v vs Winner(2.v-3.v) ----
+  const finalRow = topOK ? getRowByGame(`1.v.-${topWinner}`, `${topWinner}-1.v.`) : null;
+  const finalOK = finalRow?.c[10]?.v === "OK";
+  const finalResult = finalOK ? finalRow.c[8]?.v || "" : "";
+  const finalWinner = finalOK ? finalRow.c[9]?.v || "" : "";
+
+  const label = pl => (placeMap[pl] ? `${pl} ${placeMap[pl]}` : pl);
+  const winnerLabel = w => (placeMap[w] ? placeMap[w] : w);
+  const finalWinnerLabel = finalOK ? `Winner: ${finalWinner}` : "Winner";
+
+  return `
+    <div class="brkt">
+      <div class="brkt-column brkt-column-1">
+        <div class="pair">
+          <div class="slot">${label("2.v.")}</div>
+          <div class="slot">${label("3.v.")}</div>
+          <div class="result-bubble">${topOK ? topResult : ""}</div>
+        </div>
+        <div class="pair">
+          <div class="slot">${label("4.v.")}</div>
+          <div class="slot">${label("5.v.")}</div>
+          <div class="result-bubble">${botOK ? botResult : ""}</div>
+        </div>
+      </div>
+      <div class="brkt-column brkt-column-2">
+        <div class="slot">${label("1.v.")}</div>
+        <div class="slot">${topOK ? winnerLabel(topWinner) : "Winner 2.v.-3.v."}</div>
+        <div class="result-bubble result-bubble-semi">${finalOK ? finalResult : ""}</div>
+        <div class="slot">${botOK ? winnerLabel(botWinner) : "Winner 4.v.-5.v."}</div>
+      </div>
+      <div class="brkt-column brkt-column-3">
+        <div class="slot final-winner-slot">${finalWinnerLabel}</div>
+      </div>
+    </div>
+  `;
+}
         async function fetchData() {
             try {
                 const response = await fetch(apiURL);
