@@ -17,9 +17,10 @@
 
         const teams2012 = ["JUGLA", "TALSI MIX", "KOHILA SK", "TALSI","RĪDZENE"];
         const teams2014 = ["TUKUMS", "TALSI 2013", "KOHILA SK/RAPLA KK", "TALSI", "RĪDZENE"];
-        function generateBracket(teams, vietaValues, rows) {
+        function generateBracket(teams, vietaValues, rows,group) {
+            const groupRows = rows.filter(r => r.c[3]?.v == group);
             // Limit to rows 22–27 (knockout games)
-            const knockoutRows = rows.slice(21, 27);  
+            const knockoutRows = groupRows.slice(21, 27);  
         
             // Map places (Vieta -> team name)
             const placeMap = {};
@@ -191,8 +192,8 @@
                 const tableHTML2012 = generateTable(teams2012, results2012, teamPoints2012, vietaValues2012);
                 const tableHTML2014 = generateTable(teams2014, results2014, teamPoints2014, vietaValues2014);
                 // Generate bracket HTML
-                const bracketHTML2012 = generateBracket(teams2012, vietaValues2012, rows);
-                const bracketHTML2014 = generateBracket(teams2014, vietaValues2014, rows);
+                const bracketHTML2012 = generateBracket(teams2012, vietaValues2012, rows, , "2012. g");
+                const bracketHTML2014 = generateBracket(teams2014, vietaValues2014, rows, , "2014. g");
 
                 // Display the tables
                 document.getElementById("2012-table").innerHTML = tableHTML2012;
