@@ -18,9 +18,10 @@
         const teams2012 = ["JUGLA", "TALSI MIX", "KOHILA SK", "TALSI","RĪDZENE"];
         const teams2014 = ["TUKUMS", "TALSI 2013", "KOHILA SK/RAPLA KK", "TALSI", "RĪDZENE"];
         function generateBracket(teams, vietaValues, rows,group) {
-            const groupRows = rows.filter(r => r.c[3]?.v == group);
+            //const groupRows = rows.filter(r => r.c[3]?.v == group);
             // Limit to rows 22–27 (knockout games)
-            const knockoutRows = groupRows.slice(21, 27);  
+            //const knockoutRows = groupRows.slice(21, 27); 
+            const knockoutRows = rows.slice(21, 27).filter(r => r.c[3]?.v == group);
         
             // Map places (Vieta -> team name)
             const placeMap = {};
@@ -157,7 +158,7 @@
 
                     teams.forEach((rowTeam, rowIndex) => {
                         const teamVieta = vietaValues[rowIndex] || ""; // Get the `Vieta` value by row order
-                        console.log(`Row ${rowIndex + 1}: Vieta = ${teamVieta}`); // Debugging output
+                        //console.log(`Row ${rowIndex + 1}: Vieta = ${teamVieta}`); // Debugging output
                         tableHTML += `<tr><th>${rowTeam}</th>`;
                         teams.forEach((colTeam, colIndex) => {
                             if (rowIndex === colIndex) {
