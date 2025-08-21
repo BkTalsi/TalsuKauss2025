@@ -17,7 +17,47 @@
 
         const teams2012 = ["JUGLA", "TALSI MIX", "KOHILA SK", "TALSI","RĪDZENE"];
         const teams2014 = ["TUKUMS", "TALSI 2013", "KOHILA SK/RAPLA KK", "TALSI", "RĪDZENE"];
-
+        function generateBracket(teams, vietaValues, rows) {
+            // Limit to rows 22–27 (knockout games)
+            const knockoutRows = rows.slice(21, 27);  
+        
+            // Map places (Vieta -> team name)
+            const placeMap = {};
+            teams.forEach((team, idx) => {
+                const vieta = vietaValues[idx];
+                if (vieta) {
+                    placeMap[vieta] = team;
+                }
+            });
+        
+            let bracketHTML = `<div class="bracket">`;
+        
+            knockoutRows.forEach(row => {
+                const status = row.c[10]?.v;
+                const result = row.c[8]?.v || "";
+                const winner = row.c[9]?.v || "";
+                const gameID = row.c[14]?.v;
+        
+                // GameID like "2.v.-4.v." → split to get placeholders
+                if (gameID) {
+                    const [top, bottom] = gameID.split("-");
+                    const topTeam = placeMap[top] ? `${top} ${placeMap[top]}` : top;
+                    const bottomTeam = placeMap[bottom] ? `${bottom} ${placeMap[bottom]}` : bottom;
+        
+                    bracketHTML += `
+                      <div class="match">
+                        <div class="slot">${topTeam}</div>
+                        <div class="slot">${bottomTeam}</div>
+                        <div class="result">${status === "OK" ? result : ""}</div>
+                        <div class="winner">${status === "OK" ? "Winner: " + winner : ""}</div>
+                      </div>
+                    `;
+                }
+            });
+        
+            bracketHTML += `</div>`;
+            return bracketHTML;
+        }
         async function fetchData() {
             try {
                 const response = await fetch(apiURL);
@@ -150,10 +190,16 @@
                 // Generate the two tables
                 const tableHTML2012 = generateTable(teams2012, results2012, teamPoints2012, vietaValues2012);
                 const tableHTML2014 = generateTable(teams2014, results2014, teamPoints2014, vietaValues2014);
+                // Generate bracket HTML
+                const bracketHTML2012 = generateBracket(teams2012, vietaValues2012, rows);
+                const bracketHTML2014 = generateBracket(teams2014, vietaValues2014, rows);
 
                 // Display the tables
                 document.getElementById("2012-table").innerHTML = tableHTML2012;
                 document.getElementById("2014-table").innerHTML = tableHTML2014;
+                // Display the brackets
+                document.getElementById("2012-bracket").innerHTML = bracketHTML2012;
+                document.getElementById("2014-bracket").innerHTML = bracketHTML2014;
 
             } catch (error) {
                 console.error("Error fetching data:", error);
