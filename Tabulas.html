@@ -21,7 +21,7 @@
             //const groupRows = rows.filter(r => r.c[3]?.v == group);
             // Limit to rows 22–27 (knockout games)
             //const knockoutRows = groupRows.slice(21, 27); 
-            const knockoutRows = rows.slice(21, 27).filter(r => r.c[3]?.v == group);
+            const knockoutRows = rows.slice(20, 26).filter(r => r.c[3]?.v == group);
         
             // Map places (Vieta -> team name)
             const placeMap = {};
@@ -93,7 +93,7 @@
                 // Initialize team points for both tables
                 teams2012.forEach(team => teamPoints2012[team] = 0);
                 teams2014.forEach(team => teamPoints2014[team] = 0);
-                const limitedRows = rows.slice(0, 21);
+                const limitedRows = rows.slice(0, 20);
                 limitedRows.forEach(row => {
                     const teamA = row.c[4]?.v;
                     const teamB = row.c[7]?.v;
