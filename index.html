@@ -1,136 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Sheets Table</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Sheets Table</title>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="styles.css">
-    <!-- Bootstrap JS (this is REQUIRED for toggling navbar) -->
-<!--     <link rel="icon" href="data:,"> -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        const sheetID = "1xXFGcFXoiVo6HYt7o4HDaRbhs5Q8v8mh4iVHKn5zBLQ";
-        const gid = "187862000";
-        const query = encodeURIComponent("select C,D,E,H,I,M"); // Fetch the relevant columns (K contains the URLs)
-        const apiURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&gid=${gid}&tq=${query}`;
-        
-        async function fetchData() {
-            try {
-                
-                const response = await fetch(apiURL);
-                const text = await response.text();
-                const jsonText = text.match(/\{.*\}/s)?.[0]; 
-                if (!jsonText) return;
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-                const data = JSON.parse(jsonText);
-                const headers = data.table.cols.filter((_, index) => index !== 5).map(col => col.label || "");
-                
-                function formatCell(cell, rowIndex, colIndex) {
-                    if (!cell || cell.v === undefined) return ""; // Empty cell
+  <style>
+    .custom-header {
+      background-color: #027669 !important;
+      color: white !important;
+      text-align: center;
+    }
+    .table-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center; /* Centers tables horizontally */
+      gap: 2rem;
+    }
+    table {
+      width: auto; /* Fit to content */
+      margin: auto;
+    }
+    td, th {
+      white-space: nowrap; /* Prevents breaking into multiple lines */
+      text-align: center;
+    }
+  </style>
 
-                    if (cell.f) return cell.f; // If Google provides formatted text, use it
-                    
-                    if (typeof cell.v === "string" && cell.v.startsWith("Date(")) {
-                        return extractTimeFromDate(cell.v); // Convert Google Sheets Date format
-                    }
-                    // Check if the cell contains a URL in column K (or other designated column)
-                    if (rowIndex >= 0 && colIndex === 4) {  // Apply only to column I (index 5)
-                        const urlCell = data.table.rows[rowIndex]?.c[5]; // Correct index for column M 
-                        if (urlCell && urlCell.v) {
-                            return `<a href="${urlCell.v}" target="_blank">${cell.v}</a>`;
-                        }
-                    }
-                    // If it's a normal URL, create a link
-                    // if (typeof cell.v === "string" && cell.v.startsWith("http")) {
-                    //     return `<a href="${cell.v}" target="_blank">${cell.v}</a>`; // Handle normal URLs
-                    // }
+  <script>
+    const sheetID = "1xXFGcFXoiVo6HYt7o4HDaRbhs5Q8v8mh4iVHKn5zBLQ";
+    const gid = "187862000";
+    const query = encodeURIComponent("select B,C,D,E,H,I,M"); // Now including column B
+    const apiURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&gid=${gid}&tq=${query}`;
 
-                    // // Handle date formatting
-                    // if (typeof cell.v === "string" && cell.v.startsWith("Date(")) {
-                    //     return extractTimeFromDate(cell.v); // Convert Google Sheets Date format
-                    // }
+    async function fetchData() {
+      try {
+        const response = await fetch(apiURL);
+        const text = await response.text();
+        const jsonText = text.match(/\{.*\}/s)?.[0];
+        if (!jsonText) return;
 
+        const data = JSON.parse(jsonText);
 
-                    return cell.v; // Normal text
-                }
+        // Headers: skip last column (M, URLs)
+        const headers = data.table.cols.filter((_, index) => index !== 6).map(col => col.label || "");
 
-                // Extract "hh:mm" from Google Sheets Date format
-                function extractTimeFromDate(dateString) {
-                    const match = dateString.match(/Date\((\d+),(\d+),(\d+),(\d+),(\d+)/);
-                    if (!match) return dateString; // If format is unexpected, return as is
+        function formatCell(cell, rowIndex, colIndex) {
+          if (!cell || cell.v === undefined) return "";
 
-                    let hours = parseInt(match[4]); // Get hours
-                    let minutes = match[5].padStart(2, "0"); // Get minutes and pad if needed
+          if (cell.f) return cell.f;
 
-                    return `${hours}:${minutes}`; // Return time in hh:mm format
-                }
+          if (typeof cell.v === "string" && cell.v.startsWith("Date(")) {
+            return extractTimeFromDate(cell.v);
+          }
 
-                const rows = data.table.rows.map((row, rowIndex) => 
-                    row.c.filter((_, colIndex) => colIndex !== 5) // Exclude column M (index 7)
-                        .map((cell, colIndex) => formatCell(cell, rowIndex, colIndex))
-                );
-
-
-                // Generate table
-                let table = `<table class="table table-bordered table-hover table-sm mt-3">
-                                <thead class="custom-header"><tr>`;
-                headers.forEach(header => table += `<th class="custom-header" style="background-color: #027669 !important; color: white !important;">${header}</th>`);
-                table += `</tr></thead><tbody>`;
-
-                rows.forEach(row => {
-                    const type = row[1]; // Second column value
-                    console.log("Row data:", row);
-                    console.log("Type value:", type);  // Log the cleaned-up type value
-                    let bgColor = ""; 
-                
-                    if (type === "2014. g") bgColor = 'background-color: #daf8d7 !important;'; // Light Green
-                    else if (type === "2014. g") bgColor = 'background-color: #f5d7f8 !important;'; // Light Lillac
-                console.log("Background Color: ", bgColor);  // Debugging log
-                    table += `<tr style="${bgColor}">`;
-                    //row.forEach(cell => table += `<td>${cell}</td>`);
-                    row.forEach(cell => table += `<td style="${bgColor}">${cell instanceof String ? cell : cell.toString()}</td>`);
-                    table += "</tr>";
-                });
-
-                table += "</tbody></table>";
-
-                document.getElementById("table-container").innerHTML = table;
-            } catch (error) {
-                console.error("Error fetching data:", error);
+          // Column I (index 5 now after including B)
+          if (rowIndex >= 0 && colIndex === 5) {
+            const urlCell = data.table.rows[rowIndex]?.c[6]; // Correct index for column M
+            if (urlCell && urlCell.v) {
+              return `<a href="${urlCell.v}" target="_blank">${cell.v}</a>`;
             }
+          }
+
+          return cell.v;
         }
-        
-        setInterval(fetchData, 10000); // Refresh data every 5 seconds
-        window.onload = fetchData; // Fetch data when the page loads
-    </script>
+
+        function extractTimeFromDate(dateString) {
+          const match = dateString.match(/Date\((\d+),(\d+),(\d+),(\d+),(\d+)\)/);
+          if (!match) return dateString;
+          let hours = parseInt(match[4]);
+          let minutes = match[5].padStart(2, "0");
+          return `${hours}:${minutes}`;
+        }
+
+        // Group rows by date (Column B = index 0)
+        const groupedData = {};
+        data.table.rows.forEach((row, rowIndex) => {
+          if (!row.c[0] || !row.c[0].v) return;
+          const date = row.c[0].v; // Column B value (date string like "22. augusts, 2025")
+          const cells = row.c.filter((_, colIndex) => colIndex !== 6)
+                             .map((cell, colIndex) => formatCell(cell, rowIndex, colIndex));
+
+          if (!groupedData[date]) groupedData[date] = [];
+          groupedData[date].push(cells);
+        });
+
+        let allTables = "";
+        for (const [date, rows] of Object.entries(groupedData)) {
+          let table = `<h4 class="text-center mt-4">${date}</h4>`;
+          table += `<table class="table table-bordered table-hover table-sm">
+                      <thead><tr>`;
+          headers.forEach(header => {
+            table += `<th class="custom-header">${header}</th>`;
+          });
+          table += `</tr></thead><tbody>`;
+
+          rows.forEach(row => {
+            table += "<tr>";
+            row.forEach(cell => table += `<td>${cell}</td>`);
+            table += "</tr>";
+          });
+
+          table += "</tbody></table>";
+          allTables += table;
+        }
+
+        document.getElementById("table-container").innerHTML = allTables;
+
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    setInterval(fetchData, 10000);
+    window.onload = fetchData;
+  </script>
 </head>
 <body class="bg-light">
-        <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
+  <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
     <div class="container">
-        <img src="https://raw.githubusercontent.com/BkTalsi/TalsuKauss2025/main/talsu%20novads2.jpg" alt="Logo" class="navbar-logo" style="height: 40px; margin-right: 1px;">
-        <a class="navbar-brand" href="index.html">Talsu kauss 2025</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link" href="index.html">Grafiks</a></li>
-                <li class="nav-item"><a class="nav-link" href="Tabulas.html">Tabulas</a></li>
-            </ul>
-        </div>
+      <img src="https://raw.githubusercontent.com/BkTalsi/TalsuKauss2025/main/talsu%20novads2.jpg" alt="Logo" class="navbar-logo" style="height: 40px; margin-right: 1px;">
+      <a class="navbar-brand" href="index.html">Talsu kauss 2025</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="index.html">Grafiks</a></li>
+          <li class="nav-item"><a class="nav-link" href="Tabulas.html">Tabulas</a></li>
+        </ul>
+      </div>
     </div>
-    </nav>
+  </nav>
 
-    <div class="container mt-5">
-        <h2 class="text-center">Talsu kauss 2025</h2>
-        <h3 class="text-center">22.-24. augusts, 2025</h3>
-        <div id="table-container" class="mt-4"></div>
-    </div>
+  <div class="container mt-5">
+    <h2 class="text-center">Talsu kauss 2025</h2>
+    <h3 class="text-center">22.-24. augusts, 2025</h3>
+    <div id="table-container" class="table-container mt-4"></div>
+  </div>
 </body>
 </html>
