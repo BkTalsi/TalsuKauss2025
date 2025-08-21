@@ -150,148 +150,119 @@ body {
 }
 /* New Bracket Layout */
 .brkt {
-    display: grid;
-    grid-template-columns: minmax(260px, 1fr) 40px minmax(260px, 1fr);
-    column-gap: 24px;
-    align-items: start;
-    margin-top: 12px;
+  display: grid;
+  grid-template-columns: minmax(200px, 1fr) 50px minmax(200px, 1fr);
+  column-gap: 24px;
+  align-items: center;
+  margin-top: 12px;
+  position: relative;
 }
 
 .brkt-left,
-.brkt-right {
-    display: flex;
-    flex-direction: column;
-    gap: 28px;
-    position: relative;
+.brkt-right,
+.brkt-middle {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  position: relative;
 }
 
 /* Slot Styles (the boxes) */
 .brkt .slot {
-    background: #f8f9fa;
-    border: 2px solid #027669;
-    border-radius: 8px;
-    padding: 6px 10px;
-    min-width: 180px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    font-weight: 700;
-    font-size: 14px;
-    position: relative;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  background: #f8f9fa;
+  border: 2px solid #027669;
+  border-radius: 8px;
+  padding: 6px 10px;
+  min-width: 180px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 14px;
+  position: relative;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 /* Left Column: two stacked pairs */
 .pair {
-    --slot-h: 44px;
-    --gap: 12px;
-    position: relative;
-    padding-right: 40px;
-    display: flex;
-    flex-direction: column;
-    gap: var(--gap);
+  --slot-h: 44px;
+  --gap: 12px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
 }
 
-/* Horizontal arms from each slot into the middle rail */
+/* Lines from left slots to middle rail */
 .pair .slot.up::after,
 .pair .slot.dn::after {
-    content: "";
-    position: absolute;
-    right: -40px;
-    top: calc(var(--slot-h) / 2 - 1px);
-    width: 40px;
-    height: 2px;
-    background: #c9c9c9;
+  content: "";
+  position: absolute;
+  right: -24px;
+  top: 50%;
+  width: 24px;
+  height: 2px;
+  background: #c9c9c9;
+  transform: translateY(-50%);
 }
 
-/* Vertical line connecting the two horizontals */
-.pair::after {
-    content: "";
-    position: absolute;
-    right: -40px;
-    top: calc(var(--slot-h) / 2);
-    width: 2px;
-    height: calc(var(--slot-h) + var(--gap));
-    background: #c9c9c9;
+/* Bracket middle column - the main rail */
+.brkt-middle {
+  align-items: center;
+  gap: 28px;
 }
 
-/* Result bubble at the join */
-.mini-knot {
-    position: absolute;
-    right: -40px;
-    top: calc(var(--slot-h) + var(--gap) / 2);
-    transform: translate(8px, -50%);
-    font-size: 12px;
-    background: #fff;
-    padding: 2px 6px;
-    border-radius: 6px;
-    border: 1px solid #e5e5e5;
-    white-space: nowrap;
-}
-.mini-knot .mini-win {
-    font-weight: 700;
-    margin-left: 6px;
-    color: #e4312a;
+.brkt-middle .mini-knot {
+  font-size: 12px;
+  background: #fff;
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid #e5e5e5;
+  white-space: nowrap;
 }
 
-/* Right Column: the final knot */
-.knot {
-    position: relative;
-    padding-left: 40px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.brkt-middle .rail {
+  width: 2px;
+  height: 100px; /* Adjust height as needed */
+  background: #c9c9c9;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
-/* Incoming line from rail into the knot center */
-.knot::before {
-    content: "";
-    position: absolute;
-    left: -40px;
-    top: calc((44px + 8px) / 2);
-    width: 40px;
-    height: 2px;
-    background: #c9c9c9;
+/* Right Column: the final winner */
+.brkt-right {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 }
 
-/* Text styles for results */
-.knot .result {
-    font-size: 13px;
-    margin-left: 2px;
-    color: #333;
-}
-.knot .winner {
-    font-size: 13px;
-    font-weight: 700;
-    color: #e4312a;
-    margin-left: 2px;
+/* Lines from middle rail to right slots */
+.brkt-right .slot.up::before,
+.brkt-right .slot.dn::before {
+  content: "";
+  position: absolute;
+  left: -24px;
+  top: 50%;
+  width: 24px;
+  height: 2px;
+  background: #c9c9c9;
+  transform: translateY(-50%);
 }
 
-/* Mobile Tweaks */
-@media (max-width: 768px) {
-    .brkt {
-        grid-template-columns: 1fr;
-        row-gap: 18px;
-    }
-    .pair {
-        padding-right: 24px;
-    }
-    .pair .slot.up::after,
-    .pair .slot.dn::after {
-        right: -24px;
-        width: 24px;
-    }
-    .pair::after {
-        right: -24px;
-    }
-    .mini-knot {
-        right: -24px;
-    }
-    .knot {
-        padding-left: 24px;
-    }
-    .knot::before {
-        left: -24px;
-        width: 24px;
-    }
+.brkt-right .final-knot {
+  font-size: 13px;
+  margin-top: 24px;
+  text-align: center;
+}
+.brkt-right .result {
+  color: #333;
+}
+.brkt-right .winner {
+  font-weight: 700;
+  color: #e4312a;
 }
