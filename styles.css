@@ -148,20 +148,18 @@ body {
         grid-template-columns: 1fr; /* 1 column on small screens */
     }
 }
-/* Bracket layout: 3 columns */
+/* Bracket Layout */
 .brkt {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr; /* 3 equal columns */
-  gap: 40px;
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  position: relative;
   padding: 10px;
 }
 
-/* Column stacks */
-.brkt .column {
+.brkt-left, .brkt-right {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 25px;
 }
 
 /* Slot (team box) */
@@ -177,10 +175,53 @@ body {
   justify-content: center;
   font-weight: 600;
   font-size: 13px;
+  position: relative;
+  margin: 5px 0;
 }
 
-/* Result bubble */
-.result-bubble {
+/* Left Column Styling */
+.brkt-left {
+  gap: 30px; /* Space between the two pairs */
+}
+
+.brkt-left .pair {
+  position: relative;
+}
+
+/* Horizontal lines from left slots to middle */
+.brkt-left .pair .slot:first-child::after,
+.brkt-left .pair .slot:last-child::after {
+  content: '';
+  position: absolute;
+  right: -25px;
+  width: 25px;
+  height: 2px;
+  background: #c9c9c9;
+  z-index: 1;
+}
+
+.brkt-left .pair .slot:first-child::after { top: 50%; }
+.brkt-left .pair .slot:last-child::after { bottom: 50%; }
+
+/* Vertical line connecting the two horizontal lines */
+.brkt-left .pair::before {
+  content: '';
+  position: absolute;
+  right: -25px;
+  top: 50%;
+  width: 2px;
+  height: calc(100% - 20px);
+  background: #c9c9c9;
+  transform: translateY(-50%);
+  z-index: 0;
+}
+
+/* Result bubble on left side */
+.brkt-left .pair .result-bubble {
+  position: absolute;
+  right: -40px;
+  top: 50%;
+  transform: translateY(-50%);
   font-size: 12px;
   background: #fff;
   padding: 2px 6px;
@@ -188,27 +229,95 @@ body {
   border: 1px solid #ccc;
   white-space: nowrap;
   text-align: center;
+  z-index: 2;
 }
 
-/* Winner highlight */
-.winner-text {
-  font-weight: bold;
-  color: #E4312A;
-  margin-top: 5px;
-  font-size: 14px;
+/* Right Column Styling */
+.brkt-right {
+  gap: 30px;
 }
 
-/* Adjust table vs bracket width */
-.row .col-md-8 {
-  flex: 0 0 65%;
-  max-width: 65%;
-}
-.row .col-md-4 {
-  flex: 0 0 35%;
-  max-width: 35%;
+.brkt-right .pair {
+  position: relative;
 }
 
-/* Smaller font inside table if needed */
-.table th, .table td {
+/* Vertical line connecting 1.v. and Winner 2.v.-3.v. */
+.brkt-right .pair::before {
+  content: '';
+  position: absolute;
+  left: -25px;
+  top: 50%;
+  width: 2px;
+  height: calc(100% - 20px);
+  background: #c9c9c9;
+  transform: translateY(-50%);
+  z-index: 0;
+}
+
+/* Horizontal lines from right slots to vertical line */
+.brkt-right .pair .slot:first-child::before,
+.brkt-right .pair .slot:last-child::before,
+.brkt-right .single-slot .slot::before {
+  content: '';
+  position: absolute;
+  left: -25px;
+  width: 25px;
+  height: 2px;
+  background: #c9c9c9;
+  z-index: 1;
+}
+.brkt-right .pair .slot:first-child::before { top: 50%; }
+.brkt-right .pair .slot:last-child::before { bottom: 50%; }
+.brkt-right .single-slot .slot::before { top: 50%; }
+
+/* Final result bubble and winner box */
+.brkt-right .final-match {
+  position: relative;
+}
+
+.brkt-right .result-bubble {
+  position: absolute;
+  left: -40px;
+  top: 50%;
+  transform: translateY(-50%);
   font-size: 12px;
+  background: #fff;
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  white-space: nowrap;
+  text-align: center;
+  z-index: 2;
+}
+
+.brkt-right .final-winner {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%) translateX(25px);
+}
+
+.brkt-right .winner-box {
+  background: #f8f9fa;
+  border: 2px solid #027669;
+  border-radius: 8px;
+  padding: 4px 8px;
+  min-width: 140px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 13px;
+  color: #E4312A;
+  position: relative;
+}
+
+.brkt-right .winner-box::before {
+  content: '';
+  position: absolute;
+  left: -25px;
+  width: 25px;
+  height: 2px;
+  background: #c9c9c9;
 }
