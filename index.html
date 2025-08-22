@@ -116,7 +116,7 @@
     const sheetID = "1xXFGcFXoiVo6HYt7o4HDaRbhs5Q8v8mh4iVHKn5zBLQ";
     const gid = "187862000";
     // We SELECT B (date) so we can group, and C,D,E,H,I,M (M contains URL).
-    const query = encodeURIComponent("select B,C,D,E,H,I,M");
+    const query = encodeURIComponent("select B,C,D,E,H,I,M,N");
     const apiURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&gid=${gid}&tq=${query}`;
 
     // Extract JSON from Google response wrapper
@@ -172,13 +172,14 @@
 
         // Original columns (in the order we requested): B(0),C(1),D(2),E(3),H(4),I(5),M(6)
         // We will DISPLAY columns C,D,E,H,I -> original indices [1,2,3,4,5]
-        const displayColIndices = [1,2,3,4,5];
+        const displayColIndices = [1,2,3,4,5,"youtube"];
 
         // Build displayed headers (exclude date (0) and url column (6))
         const headersDisplayed = data.table.cols
-          .filter((_, idx) => idx !== 0 && idx !== 6)
+          .filter((_, idx) => idx !== 0 && idx !== 6 && idx !== 7)
           .map(col => col.label || "");
-
+        headersDisplayed.push("Video");
+        
         // Find original column index for "Grupa" (case-insensitive) so we can color rows accurately.
         // If not found, group coloring will fall back to checking the displayed cells.
         const groupOriginalIdx = data.table.cols.findIndex(col => {
@@ -236,9 +237,34 @@
             html += `<tr class="${rowClass}">`;
             // Render only the displayed columns (C,D,E,H,I)
             displayColIndices.forEach(origIdx => {
-              const cell = rowObj.c[origIdx];
-              const content = formatCell(cell, rowObj, origIdx);
-              html += `<td>${content}</td>`;
+              if (origIdx === "youtube") {
+                const ytCell = rowObj.c[7]; // column N
+                const link = ytCell && ytCell.v ? String(ytCell.v).trim() : "";
+              
+                if (link) {
+                  html += `<td>
+                    <a href="${link}" target="_blank" rel="noopener noreferrer">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                           viewBox="0 0 24 24" fill="red">
+                        <path d="M23.498 6.186a2.993 2.993 0 0 0-2.112-2.12C19.505 3.5 
+                                 12 3.5 12 3.5s-7.505 0-9.386.566a2.993 2.993 0 0 0-2.112 
+                                 2.12A31.24 31.24 0 0 0 .5 12a31.24 31.24 0 0 0 .002 
+                                 5.814 2.993 2.993 0 0 0 2.112 2.12C4.495 20.5 12 
+                                 20.5 12 20.5s7.505 0 9.386-.566a2.993 2.993 0 0 0 
+                                 2.112-2.12A31.24 31.24 0 0 0 23.5 12a31.24 31.24 
+                                 0 0 0-.002-5.814zM9.75 15.02V8.98L15.5 12l-5.75 
+                                 3.02z"/>
+                      </svg>
+                    </a>
+                  </td>`;
+                } else {
+                  html += "<td></td>"; // really empty if no link
+                }
+              } else {
+                const cell = rowObj.c[origIdx];
+                const content = formatCell(cell, rowObj, origIdx);
+                html += `<td>${content}</td>`;
+              }
             });
             html += `</tr>`;
           });
