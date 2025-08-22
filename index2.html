@@ -239,10 +239,12 @@
             displayColIndices.forEach(origIdx => {
               if (origIdx === "youtube") {
                 const ytCell = rowObj.c[7]; // column N
-                if (ytCell && ytCell.v) {
+                const link = ytCell && ytCell.v ? String(ytCell.v).trim() : "";
+              
+                if (link) {
                   html += `<td>
-                    <a href="${ytCell.v}" target="_blank" rel="noopener noreferrer">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
+                    <a href="${link}" target="_blank" rel="noopener noreferrer">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                            viewBox="0 0 24 24" fill="red">
                         <path d="M23.498 6.186a2.993 2.993 0 0 0-2.112-2.12C19.505 3.5 
                                  12 3.5 12 3.5s-7.505 0-9.386.566a2.993 2.993 0 0 0-2.112 
@@ -256,7 +258,7 @@
                     </a>
                   </td>`;
                 } else {
-                  html += "<td></td>"; // empty if no link
+                  html += "<td></td>"; // really empty if no link
                 }
               } else {
                 const cell = rowObj.c[origIdx];
